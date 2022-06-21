@@ -12,13 +12,13 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private float _rotationSpeed;
     [SerializeField]
-    private float _maxSpeed;
+    private float _gravityValue;
 
     private Transform _cameraTransform;
     private Rigidbody _rigidbody;
     private PlayerInput _playerInput;
     [SerializeField]
-    private bool _playerGrounded;
+    private bool _isPlayerGrounded;
 
     private InputAction _moveAction;
     private InputAction _jumpAction;
@@ -51,49 +51,57 @@ public class PlayerController : MonoBehaviour
     {
         _jumpAction.performed += _ => OnJump();
     }
+    private void OnDisable()
+    {
+        _jumpAction.performed += _ => OnJump();
+    }
+
     private void OnJump()
     {
-        if (_playerGrounded)
+        if (_isPlayerGrounded)
         {
             _rigidbody.AddForce(Vector3.up * _jumpHeight, ForceMode.Impulse);
-            _playerGrounded = false;
         }
     }
+
     private void Update()
     {
         _moveDirection = PlayerInputVector();
-        _moveDirection = ToCameraDirectionMovement(_moveDirection, _cameraTransform);
+        _moveDirection = MovementRelativeToCamera(_moveDirection, _cameraTransform);
 
-        // rotate player toward camera direction
-        float targetAngle = _cameraTransform.eulerAngles.y;
-        Quaternion targetRotation = Quaternion.Euler(0, targetAngle, 0);
-        transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, _rotationSpeed * Time.deltaTime);
+        RotatePlayerTowardsCamera();
 
         Vector3 PlayerInputVector()
         {
             Vector2 input = _moveAction.ReadValue<Vector2>();
-            Vector3 move = new Vector3(input.x, 0, input.y);
+            Vector3 move = new(input.x, 0, input.y);
             return move.normalized;
         }
 
-        Vector3 ToCameraDirectionMovement(Vector3 movementDirection, Transform cameraTransform)
+        Vector3 MovementRelativeToCamera(Vector3 movementDirection, Transform cameraTransform)
         {
             movementDirection = movementDirection.x * cameraTransform.right.normalized + movementDirection.z * cameraTransform.forward.normalized;
             movementDirection.y = 0f;
             return movementDirection;
         }
+
+        void RotatePlayerTowardsCamera()
+        {
+            float targetAngle = _cameraTransform.eulerAngles.y;
+            Quaternion targetRotation = Quaternion.Euler(0, targetAngle, 0);
+            transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, _rotationSpeed * Time.deltaTime);
+        }
     }
     private void FixedUpdate()
     {
-        _playerGrounded = Physics.CheckSphere(_groundChecker.position, _groundDistance, _jumpLayer, QueryTriggerInteraction.Ignore);
-        float airSpeedModifier = _playerGrounded ? 1f : 0.7f;
+        _isPlayerGrounded = Physics.CheckSphere(_groundChecker.position, _groundDistance, _jumpLayer, QueryTriggerInteraction.Ignore);
+        MovePlayer();
 
-        //move
-
-        if (_rigidbody.velocity.magnitude < _maxSpeed)
+        void MovePlayer()
         {
-            _rigidbody.AddForce(_moveDirection * _playerSpeed * airSpeedModifier, ForceMode.Force);
+            float airModifier = _isPlayerGrounded ? 1f : 0.8f;
+            _moveDirection *= _playerSpeed * airModifier * Time.deltaTime;
+            _rigidbody.velocity = new Vector3(_moveDirection.x, _rigidbody.velocity.y, _moveDirection.z);
         }
-
     }
-} 
+}

@@ -1010,6 +1010,11 @@ PrefabInstance:
       propertyPath: m_LookAt
       value: 
       objectReference: {fileID: 5883571391287992525}
+    - target: {fileID: 186185502150250834, guid: d7aed8dd703326d4f9eb2963327b2974,
+        type: 3}
+      propertyPath: m_Lens.m_SensorSize.x
+      value: 1.777311
+      objectReference: {fileID: 0}
     - target: {fileID: 186185502150250835, guid: d7aed8dd703326d4f9eb2963327b2974,
         type: 3}
       propertyPath: m_RootOrder
@@ -1108,12 +1113,12 @@ PrefabInstance:
     - target: {fileID: 5883571393325847224, guid: ae1ac73ef969caa4dbc83bdf653e8517,
         type: 3}
       propertyPath: _jumpHeight
-      value: 750
+      value: 300
       objectReference: {fileID: 0}
     - target: {fileID: 5883571393325847224, guid: ae1ac73ef969caa4dbc83bdf653e8517,
         type: 3}
       propertyPath: _playerSpeed
-      value: 2000
+      value: 200
       objectReference: {fileID: 0}
     - target: {fileID: 5883571393325847224, guid: ae1ac73ef969caa4dbc83bdf653e8517,
         type: 3}
