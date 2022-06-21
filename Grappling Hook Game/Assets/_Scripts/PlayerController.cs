@@ -61,17 +61,19 @@ public class PlayerController : MonoBehaviour
         move.y = 0f;
         transform.position += move * _playerSpeed * Time.deltaTime;
 
-        // changes the height position of the player
+        // jump
         if (_jumpAction.triggered && _isPlayerGrounded)
         {
             _playerVelocity.y += Mathf.Sqrt(_jumpHeight * -3.0f * _gravityValue);
         }
 
+        // gravity
         _playerVelocity.y += _gravityValue * Time.deltaTime;
 
+        // momentum
         transform.position += _playerVelocity * Time.deltaTime;
 
-        // Rotate towards Camera Direction
+        // rotate toward camera direction
         float targetAngle = _cameraTransform.eulerAngles.y;
         Quaternion targetRotation = Quaternion.Euler(0, targetAngle, 0);
         transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, _rotationSpeed * Time.deltaTime);
