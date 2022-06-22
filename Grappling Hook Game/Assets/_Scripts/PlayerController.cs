@@ -12,12 +12,15 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private float _rotationSpeed;
     [SerializeField]
-    private float _gravityValue;
+    private float _forceModifier;
+    [SerializeField]
+    private float _maxSpeed;
+    [SerializeField]
+    private float _maxSpeedAir;
 
     private Transform _cameraTransform;
     private Rigidbody _rigidbody;
     private PlayerInput _playerInput;
-    private Vector3 _playerVelocity;
     [SerializeField]
     private bool _isPlayerGrounded;
 
@@ -30,6 +33,9 @@ public class PlayerController : MonoBehaviour
     private Transform _groundChecker;
     [SerializeField]
     private float _groundDistance;
+
+
+    private Vector3 _moveDirection;
 
     private void Awake()
     {
@@ -45,37 +51,67 @@ public class PlayerController : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
     }
 
+    private void OnEnable()
+    {
+        _jumpAction.performed += _ => OnJump();
+    }
+    private void OnDisable()
+    {
+        _jumpAction.performed += _ => OnJump();
+    }
+
+    private void OnJump()
+    {
+        if (_isPlayerGrounded)
+        {
+            _rigidbody.AddForce(Vector3.up * _jumpHeight, ForceMode.Impulse);
+        }
+    }
+
     private void Update()
     {
+        _moveDirection = PlayerInputVector();
+        _moveDirection = MovementRelativeToCamera(_moveDirection, _cameraTransform);
+
+        RotatePlayerTowardsCamera();
+
+        Vector3 PlayerInputVector()
+        {
+            Vector2 input = _moveAction.ReadValue<Vector2>();
+            Vector3 move = new(input.x, 0, input.y);
+            return move.normalized;
+        }
+
+        Vector3 MovementRelativeToCamera(Vector3 move, Transform cameraTransform)
+        {
+            move = move.x * cameraTransform.right.normalized + move.z * cameraTransform.forward.normalized;
+            move.y = 0f;
+            return move;
+        }
+
+        void RotatePlayerTowardsCamera()
+        {
+            float targetAngle = _cameraTransform.eulerAngles.y;
+            Quaternion targetRotation = Quaternion.Euler(0, targetAngle, 0);
+            transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, _rotationSpeed * Time.deltaTime);
+        }
+    }
+    private void FixedUpdate()
+    {
         _isPlayerGrounded = Physics.CheckSphere(_groundChecker.position, _groundDistance, _jumpLayer, QueryTriggerInteraction.Ignore);
-        if (_isPlayerGrounded && _playerVelocity.y < 0)
+        MovePlayer();
+        
+        void MovePlayer()
         {
-            _playerVelocity.y = 0f;
+            _rigidbody.drag = _isPlayerGrounded ? 10f : 0.1f;
+            float airModifier = _isPlayerGrounded ? 1f : 0.5f;
+            float maxSpeed = _isPlayerGrounded ? _maxSpeed : _maxSpeedAir;
+            _moveDirection *= _playerSpeed * airModifier * Time.fixedDeltaTime;
+            
+            if (_rigidbody.velocity.magnitude < maxSpeed)
+            {
+                _rigidbody.AddForce(_moveDirection * _forceModifier);
+            }
         }
-
-        Vector2 input = _moveAction.ReadValue<Vector2>();
-        Vector3 move = new Vector3(input.x, 0, input.y);
-
-        // moves player relative to camera direction
-        move = move.x * _cameraTransform.right.normalized + move.z * _cameraTransform.forward.normalized;
-        move.y = 0f;
-        transform.position += move * _playerSpeed * Time.deltaTime;
-
-        // jump
-        if (_jumpAction.triggered && _isPlayerGrounded)
-        {
-            _playerVelocity.y += Mathf.Sqrt(_jumpHeight * -3.0f * _gravityValue);
-        }
-
-        // gravity
-        _playerVelocity.y += _gravityValue * Time.deltaTime;
-
-        // momentum
-        transform.position += _playerVelocity * Time.deltaTime;
-
-        // rotate toward camera direction
-        float targetAngle = _cameraTransform.eulerAngles.y;
-        Quaternion targetRotation = Quaternion.Euler(0, targetAngle, 0);
-        transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, _rotationSpeed * Time.deltaTime);
     }
 }
