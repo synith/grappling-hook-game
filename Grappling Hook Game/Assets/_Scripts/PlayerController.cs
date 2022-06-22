@@ -12,7 +12,11 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private float _rotationSpeed;
     [SerializeField]
-    private float _gravityValue;
+    private float _forceModifier;
+    [SerializeField]
+    private float _maxSpeed;
+    [SerializeField]
+    private float _maxSpeedAir;
 
     private Transform _cameraTransform;
     private Rigidbody _rigidbody;
@@ -78,11 +82,11 @@ public class PlayerController : MonoBehaviour
             return move.normalized;
         }
 
-        Vector3 MovementRelativeToCamera(Vector3 movementDirection, Transform cameraTransform)
+        Vector3 MovementRelativeToCamera(Vector3 move, Transform cameraTransform)
         {
-            movementDirection = movementDirection.x * cameraTransform.right.normalized + movementDirection.z * cameraTransform.forward.normalized;
-            movementDirection.y = 0f;
-            return movementDirection;
+            move = move.x * cameraTransform.right.normalized + move.z * cameraTransform.forward.normalized;
+            move.y = 0f;
+            return move;
         }
 
         void RotatePlayerTowardsCamera()
@@ -96,12 +100,18 @@ public class PlayerController : MonoBehaviour
     {
         _isPlayerGrounded = Physics.CheckSphere(_groundChecker.position, _groundDistance, _jumpLayer, QueryTriggerInteraction.Ignore);
         MovePlayer();
-
+        
         void MovePlayer()
         {
-            float airModifier = _isPlayerGrounded ? 1f : 0.8f;
-            _moveDirection *= _playerSpeed * airModifier * Time.deltaTime;
-            _rigidbody.velocity = new Vector3(_moveDirection.x, _rigidbody.velocity.y, _moveDirection.z);
+            _rigidbody.drag = _isPlayerGrounded ? 10f : 0.1f;
+            float airModifier = _isPlayerGrounded ? 1f : 0.5f;
+            float maxSpeed = _isPlayerGrounded ? _maxSpeed : _maxSpeedAir;
+            _moveDirection *= _playerSpeed * airModifier * Time.fixedDeltaTime;
+            
+            if (_rigidbody.velocity.magnitude < maxSpeed)
+            {
+                _rigidbody.AddForce(_moveDirection * _forceModifier);
+            }
         }
     }
 }
