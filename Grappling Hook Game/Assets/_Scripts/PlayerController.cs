@@ -18,6 +18,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private float _maxSpeedAir;
 
+    private GrapplingHook _hook;
+
     private Transform _cameraTransform;
     private Rigidbody _rigidbody;
     private PlayerInput _playerInput;
@@ -39,6 +41,7 @@ public class PlayerController : MonoBehaviour
 
     private void Awake()
     {
+        _hook = GetComponent<GrapplingHook>();
         _cameraTransform = Camera.main.transform;
         _rigidbody = GetComponent<Rigidbody>();
         _playerInput = GetComponent<PlayerInput>();
@@ -54,10 +57,14 @@ public class PlayerController : MonoBehaviour
     private void OnEnable()
     {
         _jumpAction.performed += _ => OnJump();
+        _grappleAction.performed += _ => _hook.StartGrapple();
+        _jumpAction.canceled += _ => _hook.StopGrapple();
     }
     private void OnDisable()
     {
-        _jumpAction.performed += _ => OnJump();
+        _jumpAction.performed -= _ => OnJump();
+        _grappleAction.performed -= _ => _hook.StartGrapple();
+        _jumpAction.canceled -= _ => _hook.StopGrapple();
     }
 
     private void OnJump()
