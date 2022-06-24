@@ -57,14 +57,12 @@ public class PlayerController : MonoBehaviour
     private void OnEnable()
     {
         _jumpAction.performed += _ => OnJump();
-        _grappleAction.performed += _ => _hook.StartGrapple();
-        _jumpAction.canceled += _ => _hook.StopGrapple();
+        _grappleAction.started += _ => _hook.StartGrapple();
     }
     private void OnDisable()
     {
         _jumpAction.performed -= _ => OnJump();
-        _grappleAction.performed -= _ => _hook.StartGrapple();
-        _jumpAction.canceled -= _ => _hook.StopGrapple();
+        _grappleAction.started -= _ => _hook.StartGrapple();
     }
 
     private void OnJump()
@@ -77,6 +75,12 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
+        if (_grappleAction.WasReleasedThisFrame())
+        {
+            _hook.StopGrapple();
+        }
+            
+
         _moveDirection = PlayerInputVector();
         _moveDirection = MovementRelativeToCamera(_moveDirection, _cameraTransform);
 
@@ -107,14 +111,14 @@ public class PlayerController : MonoBehaviour
     {
         _isPlayerGrounded = Physics.CheckSphere(_groundChecker.position, _groundDistance, _jumpLayer, QueryTriggerInteraction.Ignore);
         MovePlayer();
-        
+
         void MovePlayer()
         {
             _rigidbody.drag = _isPlayerGrounded ? 10f : 0.1f;
             float airModifier = _isPlayerGrounded ? 1f : 0.5f;
             float maxSpeed = _isPlayerGrounded ? _maxSpeed : _maxSpeedAir;
             _moveDirection *= _playerSpeed * airModifier * Time.fixedDeltaTime;
-            
+
             if (_rigidbody.velocity.magnitude < maxSpeed)
             {
                 _rigidbody.AddForce(_moveDirection * _forceModifier);
