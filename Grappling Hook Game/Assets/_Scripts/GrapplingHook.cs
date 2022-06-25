@@ -62,6 +62,8 @@ public class GrapplingHook : MonoBehaviour
     private void DrawRope()
     {
         if (!IsGrappling) return;
+
+        if (!_joint) return;
         _lineRenderer.SetPosition(0, _shootPointTransform.position);
         _lineRenderer.SetPosition(1, GrapplePoint);
     }
