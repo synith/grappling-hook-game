@@ -79,7 +79,7 @@ public class PlayerController : MonoBehaviour
         {
             _hook.StopGrapple();
         }
-            
+
 
         _moveDirection = PlayerInputVector();
         _moveDirection = MovementRelativeToCamera(_moveDirection, _cameraTransform);
@@ -119,9 +119,12 @@ public class PlayerController : MonoBehaviour
             float maxSpeed = _isPlayerGrounded ? _maxSpeed : _maxSpeedAir;
             _moveDirection *= _playerSpeed * airModifier * Time.fixedDeltaTime;
 
-            if (_rigidbody.velocity.magnitude < maxSpeed)
+            Vector2 rigidbodyVelocity = new Vector2(_rigidbody.velocity.x, _rigidbody.velocity.z);
+            if (rigidbodyVelocity.magnitude < maxSpeed)
             {
-                _rigidbody.AddForce(_moveDirection * _forceModifier);
+                float force = _isPlayerGrounded ? _forceModifier : _forceModifier * 0.2f;
+                _rigidbody.AddForce(_moveDirection * force);
+
             }
         }
     }
