@@ -16375,7 +16375,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2110667407}
   m_Layer: 0
-  m_Name: Cubes
+  m_Name: Environment_Objects
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -16932,10 +16932,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _maxDistance: 100
-  _maxDistanceModifier: 0.5
-  _minDistanceModifier: 0.2
-  _jointSpringValue: 120
-  _jointDamperValue: 20
+  _maxDistanceModifier: 0.3
+  _minDistanceModifier: 0.05
+  _jointSpringValue: 180
+  _jointDamperValue: 50
   _jointMassScaleValue: 1
   _grappleLayerMask:
     serializedVersion: 2
