@@ -53,7 +53,6 @@ public class PlayerController : MonoBehaviour
 
         Cursor.lockState = CursorLockMode.Locked;
     }
-
     private void OnEnable()
     {
         _jumpAction.performed += _ => OnJump();
@@ -63,43 +62,37 @@ public class PlayerController : MonoBehaviour
     {
         _jumpAction.performed -= _ => OnJump();
         _grappleAction.started -= _ => _hook.StartGrapple();
-    }
-
-    private void OnJump()
-    {
-        if (_isPlayerGrounded)
-        {
-            _rigidbody.AddForce(Vector3.up * _jumpHeight, ForceMode.Impulse);
-        }
-    }
-
+    }    
     private void Update()
     {
-        if (_grappleAction.WasReleasedThisFrame())
-        {
-            _hook.StopGrapple();
-        }
-
-
-        _moveDirection = PlayerInputVector();
-        _moveDirection = MovementRelativeToCamera(_moveDirection, _cameraTransform);
-
+        CheckIfGrapplingStopped();
+        SetMovementDirectionFromInputAndCamera();
         RotatePlayerTowardsCamera();
 
-        Vector3 PlayerInputVector()
+        void CheckIfGrapplingStopped()
         {
-            Vector2 input = _moveAction.ReadValue<Vector2>();
-            Vector3 move = new(input.x, 0, input.y);
-            return move.normalized;
+            if (_grappleAction.WasReleasedThisFrame())
+            {
+                _hook.StopGrapple();
+            }
         }
-
-        Vector3 MovementRelativeToCamera(Vector3 move, Transform cameraTransform)
+        void SetMovementDirectionFromInputAndCamera()
         {
-            move = move.x * cameraTransform.right.normalized + move.z * cameraTransform.forward.normalized;
-            move.y = 0f;
-            return move;
-        }
-
+            _moveDirection = PlayerInputVectorNormalized();
+            _moveDirection = MovementDirectionRelativeToCamera(_moveDirection, _cameraTransform);
+            Vector3 PlayerInputVectorNormalized()
+            {
+                Vector2 input = _moveAction.ReadValue<Vector2>();
+                Vector3 move = new(input.x, 0, input.y);
+                return move.normalized;
+            }
+            Vector3 MovementDirectionRelativeToCamera(Vector3 move, Transform cameraTransform)
+            {
+                move = move.x * cameraTransform.right.normalized + move.z * cameraTransform.forward.normalized;
+                move.y = 0f;
+                return move;
+            }
+        }        
         void RotatePlayerTowardsCamera()
         {
             float targetAngle = _cameraTransform.eulerAngles.y;
@@ -115,8 +108,11 @@ public class PlayerController : MonoBehaviour
         void MovePlayer()
         {
             _rigidbody.drag = _isPlayerGrounded ? 10f : 0.1f;
+
             float airModifier = _isPlayerGrounded ? 1f : 0.5f;
             float maxSpeed = _isPlayerGrounded ? _maxSpeed : _maxSpeedAir;
+
+
             _moveDirection *= _playerSpeed * airModifier * Time.fixedDeltaTime;
 
             Vector2 rigidbodyVelocity = new Vector2(_rigidbody.velocity.x, _rigidbody.velocity.z);
@@ -126,6 +122,13 @@ public class PlayerController : MonoBehaviour
                 _rigidbody.AddForce(_moveDirection * force);
 
             }
+        }
+    }
+    private void OnJump()
+    {
+        if (_isPlayerGrounded)
+        {
+            _rigidbody.AddForce(Vector3.up * _jumpHeight, ForceMode.Impulse);
         }
     }
 }
