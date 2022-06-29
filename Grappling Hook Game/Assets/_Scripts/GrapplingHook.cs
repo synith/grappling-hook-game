@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class GrapplingHook : MonoBehaviour
@@ -21,18 +19,20 @@ public class GrapplingHook : MonoBehaviour
     public bool IsGrappling { get; private set; }
     public Vector3 GrapplePoint { get; private set; }
 
-    private LineRenderer _lineRenderer;
     private Transform _cameraTransform;
+    private LineRenderer _lineRenderer;    
     private SpringJoint _joint;
-
-
 
     private void Awake()
     {
         _lineRenderer = GetComponent<LineRenderer>();
+        _lineRenderer.enabled = false;
         _cameraTransform = Camera.main.transform;
     }
-
+    private void LateUpdate()
+    {
+        DrawRope();
+    }
     public void StartGrapple()
     {
         IsGrappling = true;
@@ -56,31 +56,23 @@ public class GrapplingHook : MonoBehaviour
 
             _lineRenderer.positionCount = 2;
         }
-
     }
-
-    private void DrawRope()
-    {
-        if (!IsGrappling) return;
-
-        if (!_joint) return;
-        _lineRenderer.SetPosition(0, _shootPointTransform.position);
-        _lineRenderer.SetPosition(1, GrapplePoint);
-    }
-
     public void StopGrapple()
     {
         IsGrappling = false;
 
         _lineRenderer.positionCount = 0;
+
         if (!_joint) return;
         Destroy(_joint);
-
     }
-
-    private void LateUpdate()
+    private void DrawRope()
     {
-        DrawRope();
+        if (!IsGrappling || !_joint)
+            return;
+        if (!_lineRenderer.enabled)
+            _lineRenderer.enabled = true;
+        _lineRenderer.SetPosition(0, _shootPointTransform.position);
+        _lineRenderer.SetPosition(1, GrapplePoint);
     }
-
 }

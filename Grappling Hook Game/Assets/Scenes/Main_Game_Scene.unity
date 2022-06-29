@@ -16414,6 +16414,12 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!223 &2112245905 stripped
+Canvas:
+  m_CorrespondingSourceObject: {fileID: 7002396621080348791, guid: a530f011f23e82b418825d878f2cd2e5,
+    type: 3}
+  m_PrefabInstance: {fileID: 8339586209409343323}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2125111677
 GameObject:
   m_ObjectHideFlags: 0
@@ -16657,12 +16663,12 @@ PrefabInstance:
     - target: {fileID: 186185502121055170, guid: d7aed8dd703326d4f9eb2963327b2974,
         type: 3}
       propertyPath: m_VerticalAxis.m_MaxValue
-      value: 90
+      value: 80
       objectReference: {fileID: 0}
     - target: {fileID: 186185502121055170, guid: d7aed8dd703326d4f9eb2963327b2974,
         type: 3}
       propertyPath: m_VerticalAxis.m_MinValue
-      value: -90
+      value: -80
       objectReference: {fileID: 0}
     - target: {fileID: 186185502121055170, guid: d7aed8dd703326d4f9eb2963327b2974,
         type: 3}
@@ -16792,17 +16798,17 @@ PrefabInstance:
     - target: {fileID: 5883571393325847224, guid: ae1ac73ef969caa4dbc83bdf653e8517,
         type: 3}
       propertyPath: _maxSpeed
-      value: 3.6
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 5883571393325847224, guid: ae1ac73ef969caa4dbc83bdf653e8517,
         type: 3}
       propertyPath: _jumpHeight
-      value: 300
+      value: 400
       objectReference: {fileID: 0}
     - target: {fileID: 5883571393325847224, guid: ae1ac73ef969caa4dbc83bdf653e8517,
         type: 3}
       propertyPath: _maxSpeedAir
-      value: 4
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 5883571393325847224, guid: ae1ac73ef969caa4dbc83bdf653e8517,
         type: 3}
@@ -16931,12 +16937,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f492726a9645cdd4e8eccc26284a3b4c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _maxDistance: 100
-  _maxDistanceModifier: 0.3
+  _maxDistance: 65
+  _maxDistanceModifier: 0.2
   _minDistanceModifier: 0.05
-  _jointSpringValue: 180
-  _jointDamperValue: 50
-  _jointMassScaleValue: 1
+  _jointSpringValue: 40
+  _jointDamperValue: 20
+  _jointMassScaleValue: 5
   _grappleLayerMask:
     serializedVersion: 2
     m_Bits: 8
@@ -17055,12 +17061,12 @@ PrefabInstance:
     - target: {fileID: 4628864144067574869, guid: a530f011f23e82b418825d878f2cd2e5,
         type: 3}
       propertyPath: m_VerticalAxis.m_MaxValue
-      value: 90
+      value: 80
       objectReference: {fileID: 0}
     - target: {fileID: 4628864144067574869, guid: a530f011f23e82b418825d878f2cd2e5,
         type: 3}
       propertyPath: m_VerticalAxis.m_MinValue
-      value: -90
+      value: -80
       objectReference: {fileID: 0}
     - target: {fileID: 4628864144067574869, guid: a530f011f23e82b418825d878f2cd2e5,
         type: 3}
@@ -17132,6 +17138,11 @@ PrefabInstance:
       propertyPath: m_LookAt
       value: 
       objectReference: {fileID: 5883571391287992525}
+    - target: {fileID: 4628864144073703109, guid: a530f011f23e82b418825d878f2cd2e5,
+        type: 3}
+      propertyPath: m_Lens.m_SensorSize.x
+      value: 1.7774725
+      objectReference: {fileID: 0}
     - target: {fileID: 4628864144073703162, guid: a530f011f23e82b418825d878f2cd2e5,
         type: 3}
       propertyPath: m_Name
@@ -17139,12 +17150,27 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7002396619997023087, guid: a530f011f23e82b418825d878f2cd2e5,
         type: 3}
+      propertyPath: _aimCanvas
+      value: 
+      objectReference: {fileID: 2112245905}
+    - target: {fileID: 7002396619997023087, guid: a530f011f23e82b418825d878f2cd2e5,
+        type: 3}
       propertyPath: playerInput
       value: 
       objectReference: {fileID: 5883571393325847219}
     - target: {fileID: 7002396619997023087, guid: a530f011f23e82b418825d878f2cd2e5,
         type: 3}
+      propertyPath: _playerInput
+      value: 
+      objectReference: {fileID: 5883571393325847219}
+    - target: {fileID: 7002396619997023087, guid: a530f011f23e82b418825d878f2cd2e5,
+        type: 3}
       propertyPath: thirdPersonCanvas
+      value: 
+      objectReference: {fileID: 3563634652571474260}
+    - target: {fileID: 7002396619997023087, guid: a530f011f23e82b418825d878f2cd2e5,
+        type: 3}
+      propertyPath: _thirdPersonCanvas
       value: 
       objectReference: {fileID: 3563634652571474260}
     m_RemovedComponents: []

@@ -8,50 +8,51 @@ using System;
 public class CameraSwitch : MonoBehaviour
 {
     [SerializeField]
-    private PlayerInput playerInput;
+    private PlayerInput _playerInput;
     [SerializeField]
-    private int priorityBoostAmount = 10;
+    private int _priorityBoostAmount = 10;
     [SerializeField]
-    private Canvas thirdPersonCanvas;
+    private Canvas _thirdPersonCanvas;
     [SerializeField]
-    private Canvas aimCanvas;
+    private Canvas _aimCanvas;
 
-    private CinemachineVirtualCamera virtualCamera;
+    private CinemachineVirtualCamera _virtualCamera;
 
-    private InputAction aimAction;
+    private InputAction _aimAction;
     
 
     private void Awake()
     {
-        virtualCamera = GetComponent<CinemachineVirtualCamera>();
-        aimAction = playerInput.actions["Aim"];
-        aimCanvas.gameObject.SetActive(false);
+        _virtualCamera = GetComponent<CinemachineVirtualCamera>();
+        _aimAction = _playerInput.actions["Aim"];
+        _aimCanvas.gameObject.SetActive(false);
     }
 
     private void OnEnable()
     {
-        aimAction.performed += _ => StartAim();
-        aimAction.canceled += _ => CancelAim();
+        _aimAction.performed += _ => StartAim();
+        _aimAction.canceled += _ => CancelAim();
+    }
+    private void OnDisable()
+    {
+        _aimAction.performed -= _ => StartAim();
+        _aimAction.canceled -= _ => CancelAim();
     }
 
     private void CancelAim()
     {
-        virtualCamera.Priority -= priorityBoostAmount;
-        aimCanvas.gameObject.SetActive(false);
-        thirdPersonCanvas.gameObject.SetActive(true);
+        _virtualCamera.Priority -= _priorityBoostAmount;
+        _aimCanvas.gameObject.SetActive(false);
+        _thirdPersonCanvas.gameObject.SetActive(true);
     }
 
     private void StartAim()
     {
-        virtualCamera.Priority += priorityBoostAmount;
-        thirdPersonCanvas.gameObject.SetActive(false);
-        aimCanvas.gameObject.SetActive(true);
+        _virtualCamera.Priority += _priorityBoostAmount;
+        _thirdPersonCanvas.gameObject.SetActive(false);
+        _aimCanvas.gameObject.SetActive(true);
         
     }
 
-    private void OnDisable()
-    {
-        aimAction.performed -= _ => StartAim();
-        aimAction.canceled -= _ => CancelAim();
-    }
+    
 }

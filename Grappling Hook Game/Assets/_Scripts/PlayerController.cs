@@ -1,10 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
-{
+{    
     [SerializeField]
     private float _playerSpeed;
     [SerializeField]
@@ -17,34 +15,33 @@ public class PlayerController : MonoBehaviour
     private float _maxSpeed;
     [SerializeField]
     private float _maxSpeedAir;
+    [SerializeField]
+    private float _groundDistance;
+    [SerializeField]
+    private LayerMask _jumpLayer;
+
+    private bool _isPlayerGrounded;
+    private Vector3 _moveDirection;
 
     private GrapplingHook _hook;
-
-    private Transform _cameraTransform;
+    
     private Rigidbody _rigidbody;
-    private PlayerInput _playerInput;
-    [SerializeField]
-    private bool _isPlayerGrounded;
+    private Transform _cameraTransform;
+    private Transform _groundChecker;
 
+    private PlayerInput _playerInput;
     private InputAction _moveAction;
     private InputAction _jumpAction;
     private InputAction _grappleAction;
 
-    [SerializeField]
-    private LayerMask _jumpLayer;
-    private Transform _groundChecker;
-    [SerializeField]
-    private float _groundDistance;
-
-
-    private Vector3 _moveDirection;
-
     private void Awake()
     {
-        _hook = GetComponent<GrapplingHook>();
         _cameraTransform = Camera.main.transform;
+
+        _hook = GetComponent<GrapplingHook>();
         _rigidbody = GetComponent<Rigidbody>();
         _playerInput = GetComponent<PlayerInput>();
+
         _groundChecker = transform.Find("groundChecker");
 
         _moveAction = _playerInput.actions["Move"];
@@ -111,7 +108,6 @@ public class PlayerController : MonoBehaviour
 
             float airModifier = _isPlayerGrounded ? 1f : 0.5f;
             float maxSpeed = _isPlayerGrounded ? _maxSpeed : _maxSpeedAir;
-
 
             _moveDirection *= _playerSpeed * airModifier * Time.fixedDeltaTime;
 
