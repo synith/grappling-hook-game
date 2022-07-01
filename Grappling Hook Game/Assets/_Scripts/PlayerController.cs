@@ -63,8 +63,9 @@ public class PlayerController : MonoBehaviour
     private void Update()
     {
         CheckIfGrapplingStopped();
-        SetMovementDirectionFromInputAndCamera();
         RotatePlayerTowardsCamera();
+        SetMovementDirectionFromInputAndCamera();
+        
 
         void CheckIfGrapplingStopped()
         {
