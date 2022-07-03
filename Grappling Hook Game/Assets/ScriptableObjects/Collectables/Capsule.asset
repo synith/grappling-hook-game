@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1bcf119ab394244409e7cfddcf458c8b, type: 3}
+  m_Name: Capsule
+  m_EditorClassIdentifier: 
+  collectableName: Capsule
+  prefab: {fileID: 441108392530145926, guid: 2db651c398ba54a4ab35cab04c923a50, type: 3}
+  amountSpawned: 2
