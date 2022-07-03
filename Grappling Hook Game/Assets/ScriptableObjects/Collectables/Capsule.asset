@@ -10,7 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1bcf119ab394244409e7cfddcf458c8b, type: 3}
-  m_Name: SecondToBeReplaced
+  m_Name: Capsule
   m_EditorClassIdentifier: 
-  collectableName: SecondToBeReplaced
-  idNumber: 2
+  collectableName: Capsule
+  prefab: {fileID: 441108392530145926, guid: 2db651c398ba54a4ab35cab04c923a50, type: 3}
+  amountSpawned: 2

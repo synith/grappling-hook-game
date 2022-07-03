@@ -6,6 +6,7 @@ using UnityEngine;
     "ScriptableObjects/CollectableType")]
 public class CollectableTypeSO : ScriptableObject
 {
-    public string collectableName; // to present to the player upon collection of the item
-    public int idNumber; // this will be used to determine if the player has all the collectables and which ones they are missing
+    public string collectableName;
+    public Transform prefab;
+    public int amountSpawned;
 }
