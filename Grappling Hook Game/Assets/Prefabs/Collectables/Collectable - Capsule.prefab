@@ -12,6 +12,8 @@ GameObject:
   - component: {fileID: 650640780572975663}
   - component: {fileID: 4972737108454067177}
   - component: {fileID: 1958706666343095813}
+  - component: {fileID: -607109576961852223}
+  - component: {fileID: -89114038052444209}
   m_Layer: 0
   m_Name: Collectable - Capsule
   m_TagString: Untagged
@@ -97,3 +99,28 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &-607109576961852223
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7652442016886584058}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b68a1897bb081214fa40087c28103435, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &-89114038052444209
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7652442016886584058}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 24ebbc869dc03c6498b84d58cffe2aa8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  collectableType: {fileID: 11400000, guid: 528fe349023094e49b457f9a07f5b188, type: 2}

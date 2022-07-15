@@ -12,6 +12,8 @@ GameObject:
   - component: {fileID: 8389637873534567987}
   - component: {fileID: 8824067654331418145}
   - component: {fileID: 98949683904844976}
+  - component: {fileID: -1737474264306406993}
+  - component: {fileID: 5299673016784255982}
   m_Layer: 0
   m_Name: Collectable - Cube
   m_TagString: Untagged
@@ -97,3 +99,28 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &-1737474264306406993
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4405610468980858329}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b68a1897bb081214fa40087c28103435, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &5299673016784255982
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4405610468980858329}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 24ebbc869dc03c6498b84d58cffe2aa8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  collectableType: {fileID: 11400000, guid: 45ad32aa582734a46abb16d5d3783a7d, type: 2}

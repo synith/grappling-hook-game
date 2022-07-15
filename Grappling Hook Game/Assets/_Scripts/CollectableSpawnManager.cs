@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class CollectableSpawnManager : MonoBehaviour
 {
+
     [SerializeField] private int sphereAmount;
     [SerializeField] private int cubeAmount;
     [SerializeField] private int capsuleAmount;
@@ -13,8 +14,6 @@ public class CollectableSpawnManager : MonoBehaviour
 
     private List<Vector3> spawnPositionsList;
     private List<CollectableTypeSO> collectableTypeList;
-    //private Dictionary<Vector3, CollectableTypeSO> spawnPositionCollectableTypeDictionary;
-    //private Dictionary<string, CollectableTypeSO> collectableNameObjectDictionary;
 
     private void Awake()
     {
@@ -31,7 +30,7 @@ public class CollectableSpawnManager : MonoBehaviour
         collectableTypeList[1].amountSpawned = cubeAmount;
         collectableTypeList[2].amountSpawned = capsuleAmount;
 
-        // linq statement that randomly shuffles list
+        // randomize placement of collectables
         List<Vector3> shuffledSpawnPositions = spawnPositionsList.OrderBy(x => Random.value).ToList();
 
         int spawnIndex = 0;
@@ -42,9 +41,10 @@ public class CollectableSpawnManager : MonoBehaviour
                 if (spawnIndex >= shuffledSpawnPositions.Count)
                     break;
 
-                Transform collectable = Instantiate(item.prefab, shuffledSpawnPositions[spawnIndex], Quaternion.identity);
+                Transform collectableTransform = Instantiate(item.prefab, shuffledSpawnPositions[spawnIndex], Quaternion.identity);
                 spawnIndex++;
             }
         }
+        CollectableCounter.Instance.SetCollectablesTotalAmount(spawnIndex);
     }
 }
