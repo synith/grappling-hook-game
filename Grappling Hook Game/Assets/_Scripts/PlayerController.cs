@@ -78,6 +78,8 @@ public class PlayerController : MonoBehaviour
         {
             _moveDirection = PlayerInputVectorNormalized();
             _moveDirection = MovementDirectionRelativeToCamera(_moveDirection, _cameraTransform);
+            _moveDirection = Vector3.ProjectOnPlane(_moveDirection, Vector3.up).normalized;
+
             Vector3 PlayerInputVectorNormalized()
             {
                 Vector2 input = _moveAction.ReadValue<Vector2>();
