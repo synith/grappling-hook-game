@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
-{    
+{
     [SerializeField]
     private float _playerSpeed;
     [SerializeField]
@@ -24,7 +24,7 @@ public class PlayerController : MonoBehaviour
     private Vector3 _moveDirection;
 
     private GrapplingHook _hook;
-    
+
     private Rigidbody _rigidbody;
     private Transform _cameraTransform;
     private Transform _groundChecker;
@@ -59,13 +59,13 @@ public class PlayerController : MonoBehaviour
     {
         _jumpAction.performed -= _ => OnJump();
         _grappleAction.started -= _ => _hook.StartGrapple();
-    }    
+    }
     private void Update()
     {
         CheckIfGrapplingStopped();
         RotatePlayerTowardsCamera();
         SetMovementDirectionFromInputAndCamera();
-        
+
 
         void CheckIfGrapplingStopped()
         {
@@ -92,7 +92,7 @@ public class PlayerController : MonoBehaviour
                 move.y = 0f;
                 return move;
             }
-        }        
+        }
         void RotatePlayerTowardsCamera()
         {
             float targetAngle = _cameraTransform.eulerAngles.y;
@@ -115,11 +115,12 @@ public class PlayerController : MonoBehaviour
             _moveDirection *= _playerSpeed * airModifier * Time.fixedDeltaTime;
 
             Vector2 rigidbodyVelocity = new Vector2(_rigidbody.velocity.x, _rigidbody.velocity.z);
+
+            float force = _isPlayerGrounded ? _forceModifier : _forceModifier * 0.2f;
+
             if (rigidbodyVelocity.magnitude < maxSpeed)
             {
-                float force = _isPlayerGrounded ? _forceModifier : _forceModifier * 0.2f;
-                _rigidbody.AddForce(_moveDirection * force);
-
+                _rigidbody.AddForce(force * _moveDirection);
             }
         }
     }

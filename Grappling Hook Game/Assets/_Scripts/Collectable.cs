@@ -6,18 +6,20 @@ using UnityEngine;
 public class Collectable : MonoBehaviour
 {
     private CollectableTypeSO collectableType;
-
     private void Awake()
     {
         collectableType = GetComponent<CollectableTypeHolder>().collectableType;
     }
-
     private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Player"))
+            GetComponent<MeshRenderer>().enabled = false;
+    }
+    private void OnTriggerExit(Collider other)
     {
         if (other.CompareTag("Player"))
             CollectCollectable();
     }
-
     private void CollectCollectable()
     {
         Destroy(gameObject);

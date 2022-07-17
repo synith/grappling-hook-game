@@ -7,9 +7,11 @@ public class CollectableCounter : MonoBehaviour
 {
     public static CollectableCounter Instance { get; private set; }
 
+    public event EventHandler OnCollecteableCollected;
+    public event EventHandler OnAllCollectablesCollected;
 
-    private int collectablesCollectedAmount;
-    private int collectablesTotalAmount;
+    public int CollectablesCollectedAmount { get; private set; }
+    public int CollectablesTotalAmount { get; private set; }
 
     private void Awake()
     {
@@ -23,18 +25,23 @@ public class CollectableCounter : MonoBehaviour
 
     public void CollectableCollected(CollectableTypeSO collectableType)
     {
-        collectablesCollectedAmount++;
+        CollectablesCollectedAmount++;
+
+        OnCollecteableCollected?.Invoke(this, EventArgs.Empty);
+
         Debug.Log($"You've collected a {collectableType.collectableName}");
-        Debug.Log($"{collectablesCollectedAmount} / {collectablesTotalAmount} collectables collected");
-        if (collectablesCollectedAmount >= collectablesTotalAmount)
+        Debug.Log($"{CollectablesCollectedAmount} / {CollectablesTotalAmount} collectables collected");
+
+        if (CollectablesCollectedAmount >= CollectablesTotalAmount)
         {
             // Game Over, You win.
             Debug.Log("Game Over!");
+            OnAllCollectablesCollected?.Invoke(this, EventArgs.Empty);
         }
     }
 
     public void SetCollectablesTotalAmount(int collectablesTotalAmount)
     {
-        this.collectablesTotalAmount = collectablesTotalAmount;
+        this.CollectablesTotalAmount = collectablesTotalAmount;
     }
 }
