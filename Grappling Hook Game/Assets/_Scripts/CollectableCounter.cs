@@ -30,18 +30,16 @@ public class CollectableCounter : MonoBehaviour
         OnCollecteableCollected?.Invoke(this, EventArgs.Empty);
 
         Debug.Log($"You've collected a {collectableType.collectableName}");
-        Debug.Log($"{CollectablesCollectedAmount} / {CollectablesTotalAmount} collectables collected");
 
         if (CollectablesCollectedAmount >= CollectablesTotalAmount)
         {
-            // Game Over, You win.
-            Debug.Log("Game Over!");
+            // Game Over
             OnAllCollectablesCollected?.Invoke(this, EventArgs.Empty);
         }
     }
 
     public void SetCollectablesTotalAmount(int collectablesTotalAmount)
     {
-        this.CollectablesTotalAmount = collectablesTotalAmount;
+        CollectablesTotalAmount = collectablesTotalAmount;
     }
 }
