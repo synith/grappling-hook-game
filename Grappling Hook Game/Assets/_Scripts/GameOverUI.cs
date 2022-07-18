@@ -15,13 +15,11 @@ public class GameOverUI : MonoBehaviour
 
         retryBtn.onClick.AddListener(() => 
         {
-            // Load Current Scene
-            Debug.Log("Loading Current Scene...");
+            GameSceneManager.Load(GameSceneManager.Scene.Main_Game_Scene);
         });
         mainMenuBtn.onClick.AddListener(() => 
         {
-            // Load Main Menu Scene
-            Debug.Log("Loading Main Menu Scene...");
+            GameSceneManager.Load(GameSceneManager.Scene.Main_Menu_Scene);
         });
     }
 
