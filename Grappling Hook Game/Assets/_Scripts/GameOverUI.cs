@@ -5,33 +5,38 @@ using UnityEngine.UI;
 
 public class GameOverUI : MonoBehaviour
 {
-    private Button retryBtn;
-    private Button mainMenuBtn;
+    private Button _retryBtn;
+    private Button _mainMenuBtn;
+
 
     private void Awake()
     {
-        retryBtn = transform.Find("retryBtn").GetComponent<Button>();
-        mainMenuBtn = transform.Find("mainMenuBtn").GetComponent<Button>();
+        _retryBtn = transform.Find("retryBtn").GetComponent<Button>();
+        _mainMenuBtn = transform.Find("mainMenuBtn").GetComponent<Button>();
 
-        retryBtn.onClick.AddListener(() => 
+        _retryBtn.onClick.AddListener(() => 
         {
             GameSceneManager.Load(GameSceneManager.Scene.Main_Game_Scene);
         });
-        mainMenuBtn.onClick.AddListener(() => 
+        _mainMenuBtn.onClick.AddListener(() => 
         {
             GameSceneManager.Load(GameSceneManager.Scene.Main_Menu_Scene);
         });
     }
 
+
     private void Start()
     {
-        CollectableCounter.Instance.OnAllCollectablesCollected += AllCollectablesCollected;
+        CollectableCounter.Instance.OnGameOver += AllCollectablesCollected;
         Hide();
     }
+
+
     private void AllCollectablesCollected(object sender, System.EventArgs e)
     {
         Show();        
     }
+
 
     public void Show()
     {
@@ -39,6 +44,8 @@ public class GameOverUI : MonoBehaviour
         gameObject.SetActive(true);
         Time.timeScale = 0f;
     }
+
+
     public void Hide()
     {
         Cursor.lockState = CursorLockMode.Locked;

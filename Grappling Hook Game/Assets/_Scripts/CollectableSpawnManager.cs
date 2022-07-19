@@ -1,50 +1,56 @@
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
 public class CollectableSpawnManager : MonoBehaviour
 {
+	[SerializeField] private int _sphereAmount;
+	[SerializeField] private int _cubeAmount;
+	[SerializeField] private int _capsuleAmount;
 
-    [SerializeField] private int sphereAmount;
-    [SerializeField] private int cubeAmount;
-    [SerializeField] private int capsuleAmount;
+	[SerializeField] private List<Transform> _spawnTransformList;
 
-    [SerializeField] private List<Transform> spawnTransformList;
+	private List<Vector3> _spawnPositionsList;
 
-    private List<Vector3> spawnPositionsList;
-    private List<CollectableTypeSO> collectableTypeList;
 
-    private void Awake()
-    {
-        collectableTypeList = Resources.Load<CollectableTypeListSO>("CollectableTypeListSO").list;
-        spawnPositionsList = new List<Vector3>();
-
-        foreach (Transform spawnTransform in spawnTransformList)
+	private void Awake()
+    {        
+        _spawnPositionsList = new List<Vector3>();
+        foreach (Transform spawnTransform in _spawnTransformList)
         {
-            spawnPositionsList.Add(spawnTransform.position);
+            _spawnPositionsList.Add(spawnTransform.position);
         }
 
-        // overwrites the value in the SO
-        collectableTypeList[0].amountSpawned = sphereAmount;
-        collectableTypeList[1].amountSpawned = cubeAmount;
-        collectableTypeList[2].amountSpawned = capsuleAmount;
+        List<Vector3> shuffledSpawnPositions = ShufflePositionsList(_spawnPositionsList);
+        SpawnCollectables(shuffledSpawnPositions);
+    }
 
-        // randomize placement of collectables
-        List<Vector3> shuffledSpawnPositions = spawnPositionsList.OrderBy(x => Random.value).ToList();
 
+    private List<Vector3> ShufflePositionsList(List<Vector3> spawnPositionsList)
+    {
+        return spawnPositionsList.OrderBy(x => Random.value).ToList();
+    }
+
+
+    private void SpawnCollectables(List<Vector3> shuffledSpawnPositions)
+    {
         int spawnIndex = 0;
-        foreach (var item in collectableTypeList)
+        List<CollectableTypeSO> collectableTypeList = Resources.Load<CollectableTypeListSO>("CollectableTypeListSO").list;
+        
+        foreach (CollectableTypeSO item in collectableTypeList)
         {
             for (int i = 0; i < item.amountSpawned; i++)
             {
                 if (spawnIndex >= shuffledSpawnPositions.Count)
+                {
+                    Debug.Log("Not enough spawn points");
                     break;
+                }
 
                 Transform collectableTransform = Instantiate(item.prefab, shuffledSpawnPositions[spawnIndex], Quaternion.identity);
                 spawnIndex++;
             }
         }
-        CollectableCounter.Instance.SetCollectablesTotalAmount(spawnIndex);
-    }
+        CollectableCounter.Instance.CollectablesTotalAmount = spawnIndex;
+    }    
 }

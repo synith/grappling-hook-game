@@ -4,23 +4,20 @@ using UnityEngine.InputSystem;
 public class PlayerController : MonoBehaviour
 {
     [SerializeField]
-    private float _playerSpeed;
-    [SerializeField]
-    private float _jumpHeight;
-    [SerializeField]
-    private float _rotationSpeed;
-    [SerializeField]
-    private float _forceModifier;
-    [SerializeField]
-    private float _maxSpeed;
-    [SerializeField]
-    private float _maxSpeedAir;
-    [SerializeField]
-    private float _groundDistance;
+    private float
+        _playerSpeed,
+        _jumpHeight,
+        _rotationSpeed,
+        _forceModifier,
+        _maxSpeed,
+        _maxSpeedAir,
+        _groundDistance;
+
     [SerializeField]
     private LayerMask _jumpLayer;
 
     private bool _isPlayerGrounded;
+
     private Vector3 _moveDirection;
 
     private GrapplingHook _hook;
@@ -30,9 +27,12 @@ public class PlayerController : MonoBehaviour
     private Transform _groundChecker;
 
     private PlayerInput _playerInput;
-    private InputAction _moveAction;
-    private InputAction _jumpAction;
-    private InputAction _grappleAction;
+
+    private InputAction
+        _moveAction,
+        _jumpAction,
+        _grappleAction;
+
 
     private void Awake()
     {
@@ -50,16 +50,22 @@ public class PlayerController : MonoBehaviour
 
         Cursor.lockState = CursorLockMode.Locked;
     }
+
+
     private void OnEnable()
     {
         _jumpAction.performed += _ => OnJump();
         _grappleAction.started += _ => _hook.StartGrapple();
     }
+
+
     private void OnDisable()
     {
         _jumpAction.performed -= _ => OnJump();
         _grappleAction.started -= _ => _hook.StartGrapple();
     }
+
+
     private void Update()
     {
         CheckIfGrapplingStopped();
@@ -74,6 +80,7 @@ public class PlayerController : MonoBehaviour
                 _hook.StopGrapple();
             }
         }
+
         void SetMovementDirectionFromInputAndCamera()
         {
             _moveDirection = PlayerInputVectorNormalized();
@@ -93,6 +100,7 @@ public class PlayerController : MonoBehaviour
                 return move;
             }
         }
+
         void RotatePlayerTowardsCamera()
         {
             float targetAngle = _cameraTransform.eulerAngles.y;
@@ -100,6 +108,8 @@ public class PlayerController : MonoBehaviour
             transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, _rotationSpeed * Time.deltaTime);
         }
     }
+
+
     private void FixedUpdate()
     {
         _isPlayerGrounded = Physics.CheckSphere(_groundChecker.position, _groundDistance, _jumpLayer, QueryTriggerInteraction.Ignore);
@@ -124,6 +134,8 @@ public class PlayerController : MonoBehaviour
             }
         }
     }
+
+
     private void OnJump()
     {
         if (_isPlayerGrounded)

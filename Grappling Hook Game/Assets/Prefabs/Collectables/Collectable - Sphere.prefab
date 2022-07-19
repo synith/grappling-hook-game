@@ -13,7 +13,6 @@ GameObject:
   - component: {fileID: 916818113164459153}
   - component: {fileID: 916818113164459158}
   - component: {fileID: -6983707314196882411}
-  - component: {fileID: 2435942235193001237}
   m_Layer: 0
   m_Name: Collectable - Sphere
   m_TagString: Untagged
@@ -111,16 +110,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b68a1897bb081214fa40087c28103435, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &2435942235193001237
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 916818113164459159}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 24ebbc869dc03c6498b84d58cffe2aa8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  collectableType: {fileID: 11400000, guid: 3f9536001ae499541b66a51d98cd706c, type: 2}
+  _collectableType: {fileID: 11400000, guid: 3f9536001ae499541b66a51d98cd706c, type: 2}
