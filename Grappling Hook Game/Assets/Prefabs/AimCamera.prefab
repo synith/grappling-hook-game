@@ -123,14 +123,14 @@ MonoBehaviour:
   m_VerticalAxis:
     Value: 13.65
     m_SpeedMode: 1
-    m_MaxSpeed: 0.05
+    m_MaxSpeed: 0.15
     m_AccelTime: 0.2
     m_DecelTime: 0.2
     m_InputAxisName: Mouse Y
     m_InputAxisValue: 0
     m_InvertInput: 1
-    m_MinValue: -70
-    m_MaxValue: 70
+    m_MinValue: -80
+    m_MaxValue: 80
     m_Wrap: 0
     m_Recentering:
       m_enabled: 0
@@ -147,7 +147,7 @@ MonoBehaviour:
   m_HorizontalAxis:
     Value: 0
     m_SpeedMode: 1
-    m_MaxSpeed: 0.06
+    m_MaxSpeed: 0.15
     m_AccelTime: 0.2
     m_DecelTime: 0.2
     m_InputAxisName: Mouse X
@@ -196,7 +196,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4628864144073703162}
-  m_LocalRotation: {x: 0.11883723, y: 0, z: 0, w: 0.9929138}
+  m_LocalRotation: {x: 0.11883721, y: 0, z: 0, w: 0.9929138}
   m_LocalPosition: {x: 0, y: 2.8300803, z: -2.2745483}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -205,7 +205,7 @@ Transform:
   - {fileID: 7002396621080348790}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 56, z: 0}
+  m_LocalEulerAnglesHint: {x: 13.65, y: 0, z: 0}
 --- !u!114 &4628864144073703109
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -235,7 +235,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 2
-    m_SensorSize: {x: 1.7787114, y: 1}
+    m_SensorSize: {x: 1.7774725, y: 1}
   m_Transitions:
     m_BlendHint: 0
     m_InheritPosition: 1
@@ -272,10 +272,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44cddd5ba0f144349a4cb2651ab98355, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerInput: {fileID: 0}
-  priorityBoostAmount: 10
-  thirdPersonCanvas: {fileID: 0}
-  aimCanvas: {fileID: 7002396621080348791}
+  _playerInput: {fileID: 0}
+  _priorityBoostAmount: 10
+  _thirdPersonCanvas: {fileID: 0}
+  _aimCanvas: {fileID: 7002396621080348791}
 --- !u!114 &7002396619997023086
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -1,8 +1,11 @@
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
+    [SerializeField] private OptionsUI _optionsUI;
+
     [SerializeField]
     private float
         _playerSpeed,
@@ -31,7 +34,8 @@ public class PlayerController : MonoBehaviour
     private InputAction
         _moveAction,
         _jumpAction,
-        _grappleAction;
+        _grappleAction,
+        _pauseAction;
 
 
     private void Awake()
@@ -47,6 +51,7 @@ public class PlayerController : MonoBehaviour
         _moveAction = _playerInput.actions["Move"];
         _jumpAction = _playerInput.actions["Jump"];
         _grappleAction = _playerInput.actions["Grapple"];
+        _pauseAction = _playerInput.actions["Pause"];
 
         Cursor.lockState = CursorLockMode.Locked;
     }
@@ -56,13 +61,15 @@ public class PlayerController : MonoBehaviour
     {
         _jumpAction.performed += _ => OnJump();
         _grappleAction.started += _ => _hook.StartGrapple();
+        _pauseAction.performed += OnPlayerPaused;
     }
-
+    
 
     private void OnDisable()
     {
         _jumpAction.performed -= _ => OnJump();
         _grappleAction.started -= _ => _hook.StartGrapple();
+        _pauseAction.performed -= OnPlayerPaused;
     }
 
 
@@ -142,5 +149,11 @@ public class PlayerController : MonoBehaviour
         {
             _rigidbody.AddForce(Vector3.up * _jumpHeight, ForceMode.Impulse);
         }
+    }
+
+    private void OnPlayerPaused(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+            _optionsUI.Toggle();
     }
 }
