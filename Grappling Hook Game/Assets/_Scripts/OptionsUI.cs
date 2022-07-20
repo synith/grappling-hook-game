@@ -25,6 +25,12 @@ public class OptionsUI : MonoBehaviour
             sensitivityValueText.SetText(sliderValue.ToString());
         });
 
+        Button mainMenuBtn = transform.Find("mainMenuBtn").GetComponent<Button>();
+        mainMenuBtn.onClick.AddListener(() => 
+        {
+            GameSceneManager.Load(GameSceneManager.Scene.Main_Menu_Scene);
+        });
+
         Hide();
     }
 
