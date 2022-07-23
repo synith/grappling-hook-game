@@ -4,32 +4,32 @@ public class GrapplingHook : MonoBehaviour
 {
     [SerializeField]
     private float
-        _maxDistance,
-        _maxDistanceModifier,
-        _minDistanceModifier,
-        _jointSpringValue,
-        _jointDamperValue,
-        _jointMassScaleValue;
+        maxDistance,
+        maxDistanceModifier,
+        minDistanceModifier,
+        jointSpringValue,
+        jointDamperValue,
+        jointMassScaleValue;
 
     [SerializeField]
-    private LayerMask _grappleLayerMask;
+    private LayerMask grappleLayerMask;
     [SerializeField]
-    private Transform _shootPointTransform;
+    private Transform shootPointTransform;
 
     public bool IsGrappling { get; private set; }
 
     public Vector3 GrapplePoint { get; private set; }
 
-    private Transform _cameraTransform;
-    private LineRenderer _lineRenderer;
-    private SpringJoint _joint;
+    private Transform cameraTransform;
+    private LineRenderer lineRenderer;
+    private SpringJoint joint;
 
 
     private void Awake()
     {
-        _lineRenderer = GetComponent<LineRenderer>();
-        _lineRenderer.enabled = false;
-        _cameraTransform = Camera.main.transform;
+        lineRenderer = GetComponent<LineRenderer>();
+        lineRenderer.enabled = false;
+        cameraTransform = Camera.main.transform;
     }
 
 
@@ -44,23 +44,23 @@ public class GrapplingHook : MonoBehaviour
         IsGrappling = true;
 
         RaycastHit hit;
-        if (Physics.Raycast(_cameraTransform.position, _cameraTransform.forward, out hit, _maxDistance, _grappleLayerMask))
+        if (Physics.Raycast(cameraTransform.position, cameraTransform.forward, out hit, maxDistance, grappleLayerMask))
         {
             GrapplePoint = hit.point;
-            _joint = gameObject.AddComponent<SpringJoint>();
-            _joint.autoConfigureConnectedAnchor = false;
-            _joint.connectedAnchor = GrapplePoint;
+            joint = gameObject.AddComponent<SpringJoint>();
+            joint.autoConfigureConnectedAnchor = false;
+            joint.connectedAnchor = GrapplePoint;
 
             float distanceFromPoint = Vector3.Distance(transform.position, GrapplePoint);
 
-            _joint.maxDistance = distanceFromPoint * _maxDistanceModifier;
-            _joint.minDistance = distanceFromPoint * _minDistanceModifier;
+            joint.maxDistance = distanceFromPoint * maxDistanceModifier;
+            joint.minDistance = distanceFromPoint * minDistanceModifier;
 
-            _joint.spring = _jointSpringValue;
-            _joint.damper = _jointDamperValue;
-            _joint.massScale = _jointMassScaleValue;
+            joint.spring = jointSpringValue;
+            joint.damper = jointDamperValue;
+            joint.massScale = jointMassScaleValue;
 
-            _lineRenderer.positionCount = 2;
+            lineRenderer.positionCount = 2;
         }
     }
 
@@ -69,24 +69,24 @@ public class GrapplingHook : MonoBehaviour
     {
         IsGrappling = false;
 
-        _lineRenderer.positionCount = 0;
+        lineRenderer.positionCount = 0;
 
-        if (!_joint)
+        if (!joint)
             return;
 
-        Destroy(_joint);
+        Destroy(joint);
     }
 
 
     private void DrawRope()
     {
-        if (!IsGrappling || !_joint)
+        if (!IsGrappling || !joint)
             return;
 
-        if (!_lineRenderer.enabled)
-            _lineRenderer.enabled = true;
+        if (!lineRenderer.enabled)
+            lineRenderer.enabled = true;
 
-        _lineRenderer.SetPosition(0, _shootPointTransform.position);
-        _lineRenderer.SetPosition(1, GrapplePoint);
+        lineRenderer.SetPosition(0, shootPointTransform.position);
+        lineRenderer.SetPosition(1, GrapplePoint);
     }
 }

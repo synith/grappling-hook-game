@@ -5,20 +5,20 @@ using UnityEngine.UI;
 
 public class GameOverUI : MonoBehaviour
 {
-    private Button _retryBtn;
-    private Button _mainMenuBtn;
+    private Button retryBtn;
+    private Button mainMenuBtn;
 
 
     private void Awake()
     {
-        _retryBtn = transform.Find("retryBtn").GetComponent<Button>();
-        _mainMenuBtn = transform.Find("mainMenuBtn").GetComponent<Button>();
+        retryBtn = transform.Find("retryBtn").GetComponent<Button>();
+        mainMenuBtn = transform.Find("mainMenuBtn").GetComponent<Button>();
 
-        _retryBtn.onClick.AddListener(() => 
+        retryBtn.onClick.AddListener(() => 
         {
             GameSceneManager.Load(GameSceneManager.Scene.Main_Game_Scene);
         });
-        _mainMenuBtn.onClick.AddListener(() => 
+        mainMenuBtn.onClick.AddListener(() => 
         {
             GameSceneManager.Load(GameSceneManager.Scene.Main_Menu_Scene);
         });

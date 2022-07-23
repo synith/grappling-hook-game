@@ -5,50 +5,94 @@ using TMPro;
 
 public class OptionsUI : MonoBehaviour
 {
-    [SerializeField] CinemachineVirtualCamera _thirdPersonCamera;
-    [SerializeField] CinemachineVirtualCamera _aimCamera;
+    [SerializeField] CinemachineVirtualCamera thirdPersonCamera;
+    [SerializeField] CinemachineVirtualCamera aimCamera;
 
-    private bool _isPaused;
+    [SerializeField] private MusicManager musicManager;
+
+    private bool isPaused;
+
+    private TextMeshProUGUI
+        sensitivityValueText,
+        musicVolumeText,
+        soundVolumeText;
+
+    private Slider sensitivitySlider;
 
     private void Awake()
     {
-        SensitivitySliderInit();
-        MainMenuButtonInit();
+        SliderInit();
+
+        ButtonInit();
 
         Hide();
 
-        void SensitivitySliderInit()
+        void SliderInit()
         {
-            TextMeshProUGUI sensitivityValueText = transform.Find("sensitivityValueText").GetComponent<TextMeshProUGUI>();
-            Slider sensitivitySlider = transform.Find("sensitivitySlider").GetComponent<Slider>();
+            sensitivityValueText = transform.Find("sensitivityValueText").GetComponent<TextMeshProUGUI>();
+            sensitivitySlider = transform.Find("sensitivitySlider").GetComponent<Slider>();
 
             sensitivitySlider.onValueChanged.AddListener(sliderValue =>
             {
                 float sensitivityModifierValue = 2f * sliderValue / sensitivitySlider.maxValue;
 
-                _thirdPersonCamera.GetComponent<CameraSensitivity>().SetSensitivity(sensitivityModifierValue);
-                _aimCamera.GetComponent<CameraSensitivity>().SetSensitivity(sensitivityModifierValue);
-
-                sensitivityValueText.SetText(sliderValue.ToString());
+                thirdPersonCamera?.GetComponent<CameraSensitivity>().SetSensitivity(sensitivityModifierValue);
+                aimCamera?.GetComponent<CameraSensitivity>().SetSensitivity(sensitivityModifierValue);
+                UpdateText();
             });
         }
 
-        void MainMenuButtonInit()
+        void ButtonInit()
         {
-            Button mainMenuBtn = transform.Find("mainMenuBtn").GetComponent<Button>();
-            mainMenuBtn.onClick.AddListener(() =>
+            musicVolumeText = transform.Find("musicVolumeText").GetComponent<TextMeshProUGUI>();
+            soundVolumeText = transform.Find("soundVolumeText").GetComponent<TextMeshProUGUI>();
+
+            transform.Find("mainMenuBtn").GetComponent<Button>().onClick.AddListener(() =>
             {
                 GameSceneManager.Load(GameSceneManager.Scene.Main_Menu_Scene);
                 SoundManager.Instance.PlaySound(SoundManager.Sound.ButtonPress);
             });
-        }
+
+            transform.Find("musicIncreaseBtn").GetComponent<Button>().onClick.AddListener(() =>
+            {
+                musicManager.IncreaseVolume();
+                UpdateText();
+                SoundManager.Instance.PlaySound(SoundManager.Sound.ButtonPress);
+            });
+
+            transform.Find("musicDecreaseBtn").GetComponent<Button>().onClick.AddListener(() =>
+            {
+                musicManager.DecreaseVolume();
+                UpdateText();
+                SoundManager.Instance.PlaySound(SoundManager.Sound.ButtonPress);
+            });
+
+            transform.Find("soundIncreaseBtn").GetComponent<Button>().onClick.AddListener(() =>
+            {
+                SoundManager.Instance.IncreaseVolume();
+                UpdateText();
+                SoundManager.Instance.PlaySound(SoundManager.Sound.ButtonPress);
+            });
+
+            transform.Find("soundDecreaseBtn").GetComponent<Button>().onClick.AddListener(() =>
+            {
+                SoundManager.Instance.DecreaseVolume();
+                UpdateText();
+                SoundManager.Instance.PlaySound(SoundManager.Sound.ButtonPress);
+            });
+        }        
     }
 
-
+    private void UpdateText()
+    {
+        sensitivityValueText.SetText(sensitivitySlider.value.ToString());
+        soundVolumeText.SetText(Mathf.RoundToInt(SoundManager.Instance.Volume * 10).ToString());
+        musicVolumeText.SetText(Mathf.RoundToInt(musicManager.Volume * 10).ToString());
+    }
 
     private void Show()
     {
-        _isPaused = true;
+        isPaused = true;
         gameObject.SetActive(true);
         Time.timeScale = 0f;
         Cursor.lockState = CursorLockMode.Confined;
@@ -57,7 +101,7 @@ public class OptionsUI : MonoBehaviour
 
     private void Hide()
     {
-        _isPaused = false;
+        isPaused = false;
         gameObject.SetActive(false);
         Time.timeScale = 1f;
         Cursor.lockState = CursorLockMode.Locked;
@@ -66,7 +110,7 @@ public class OptionsUI : MonoBehaviour
 
     public void Toggle()
     {
-        if (_isPaused)
+        if (isPaused)
             Hide();
         else
             Show();

@@ -4,54 +4,54 @@ using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField] private OptionsUI _optionsUI;
+    [SerializeField] private OptionsUI optionsUI;
 
     [SerializeField]
     private float
-        _playerSpeed,
-        _jumpHeight,
-        _rotationSpeed,
-        _forceModifier,
-        _maxSpeed,
-        _maxSpeedAir,
-        _groundDistance;
+        playerSpeed,
+        jumpHeight,
+        rotationSpeed,
+        forceModifier,
+        maxSpeed,
+        maxSpeedAir,
+        groundDistance;
 
     [SerializeField]
-    private LayerMask _jumpLayer;
+    private LayerMask jumpLayer;
 
-    private bool _isPlayerGrounded;
+    private bool isPlayerGrounded;
 
-    private Vector3 _moveDirection;
+    private Vector3 moveDirection;
 
-    private GrapplingHook _hook;
+    private GrapplingHook hook;
 
-    private Rigidbody _rigidbody;
-    private Transform _cameraTransform;
-    private Transform _groundChecker;
+    private Rigidbody playerRigidbody;
+    private Transform cameraTransform;
+    private Transform groundChecker;
 
-    private PlayerInput _playerInput;
+    private PlayerInput playerInput;
 
     private InputAction
-        _moveAction,
-        _jumpAction,
-        _grappleAction,
-        _pauseAction;
+        moveAction,
+        jumpAction,
+        grappleAction,
+        pauseAction;
 
 
     private void Awake()
     {
-        _cameraTransform = Camera.main.transform;
+        cameraTransform = Camera.main.transform;
 
-        _hook = GetComponent<GrapplingHook>();
-        _rigidbody = GetComponent<Rigidbody>();
-        _playerInput = GetComponent<PlayerInput>();
+        hook = GetComponent<GrapplingHook>();
+        playerRigidbody = GetComponent<Rigidbody>();
+        playerInput = GetComponent<PlayerInput>();
 
-        _groundChecker = transform.Find("groundChecker");
+        groundChecker = transform.Find("groundChecker");
 
-        _moveAction = _playerInput.actions["Move"];
-        _jumpAction = _playerInput.actions["Jump"];
-        _grappleAction = _playerInput.actions["Grapple"];
-        _pauseAction = _playerInput.actions["Pause"];
+        moveAction = playerInput.actions["Move"];
+        jumpAction = playerInput.actions["Jump"];
+        grappleAction = playerInput.actions["Grapple"];
+        pauseAction = playerInput.actions["Pause"];
 
         Cursor.lockState = CursorLockMode.Locked;
     }
@@ -59,17 +59,17 @@ public class PlayerController : MonoBehaviour
 
     private void OnEnable()
     {
-        _jumpAction.performed += _ => OnJump();
-        _grappleAction.started += _ => _hook.StartGrapple();
-        _pauseAction.performed += OnPlayerPaused;
+        jumpAction.performed += _ => OnJump();
+        grappleAction.started += _ => hook.StartGrapple();
+        pauseAction.performed += OnPlayerPaused;
     }
     
 
     private void OnDisable()
     {
-        _jumpAction.performed -= _ => OnJump();
-        _grappleAction.started -= _ => _hook.StartGrapple();
-        _pauseAction.performed -= OnPlayerPaused;
+        jumpAction.performed -= _ => OnJump();
+        grappleAction.started -= _ => hook.StartGrapple();
+        pauseAction.performed -= OnPlayerPaused;
     }
 
 
@@ -82,21 +82,21 @@ public class PlayerController : MonoBehaviour
 
         void CheckIfGrapplingStopped()
         {
-            if (_grappleAction.WasReleasedThisFrame())
+            if (grappleAction.WasReleasedThisFrame())
             {
-                _hook.StopGrapple();
+                hook.StopGrapple();
             }
         }
 
         void SetMovementDirectionFromInputAndCamera()
         {
-            _moveDirection = PlayerInputVectorNormalized();
-            _moveDirection = MovementDirectionRelativeToCamera(_moveDirection, _cameraTransform);
-            _moveDirection = Vector3.ProjectOnPlane(_moveDirection, Vector3.up).normalized;
+            moveDirection = PlayerInputVectorNormalized();
+            moveDirection = MovementDirectionRelativeToCamera(moveDirection, cameraTransform);
+            moveDirection = Vector3.ProjectOnPlane(moveDirection, Vector3.up).normalized;
 
             Vector3 PlayerInputVectorNormalized()
             {
-                Vector2 input = _moveAction.ReadValue<Vector2>();
+                Vector2 input = moveAction.ReadValue<Vector2>();
                 Vector3 move = new(input.x, 0, input.y);
                 return move.normalized;
             }
@@ -110,50 +110,53 @@ public class PlayerController : MonoBehaviour
 
         void RotatePlayerTowardsCamera()
         {
-            float targetAngle = _cameraTransform.eulerAngles.y;
+            float targetAngle = cameraTransform.eulerAngles.y;
             Quaternion targetRotation = Quaternion.Euler(0, targetAngle, 0);
-            transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, _rotationSpeed * Time.deltaTime);
+            transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
         }
     }
 
 
     private void FixedUpdate()
     {
-        _isPlayerGrounded = Physics.CheckSphere(_groundChecker.position, _groundDistance, _jumpLayer, QueryTriggerInteraction.Ignore);
+        isPlayerGrounded = CheckIfPlayerGrounded();
         MovePlayer();
 
         void MovePlayer()
         {
-            _rigidbody.drag = _isPlayerGrounded ? 10f : 0.1f;
+            playerRigidbody.drag = isPlayerGrounded ? 10f : 0.1f;
 
-            float airModifier = _isPlayerGrounded ? 1f : 0.5f;
-            float maxSpeed = _isPlayerGrounded ? _maxSpeed : _maxSpeedAir;
+            float airModifier = isPlayerGrounded ? 1f : 0.5f;
+            float maxSpeed = isPlayerGrounded ? this.maxSpeed : maxSpeedAir;
 
-            _moveDirection *= _playerSpeed * airModifier * Time.fixedDeltaTime;
+            moveDirection *= playerSpeed * airModifier * Time.fixedDeltaTime;
 
-            Vector2 rigidbodyVelocity = new Vector2(_rigidbody.velocity.x, _rigidbody.velocity.z);
+            Vector2 rigidbodyVelocity = new Vector2(playerRigidbody.velocity.x, playerRigidbody.velocity.z);
 
-            float force = _isPlayerGrounded ? _forceModifier : _forceModifier * 0.2f;
+            float force = isPlayerGrounded ? forceModifier : forceModifier * 0.2f;
 
             if (rigidbodyVelocity.magnitude < maxSpeed)
             {
-                _rigidbody.AddForce(force * _moveDirection);
+                playerRigidbody.AddForce(force * moveDirection);
             }
         }
     }
 
+    
+    private bool CheckIfPlayerGrounded() => Physics.CheckSphere(groundChecker.position, groundDistance, jumpLayer, QueryTriggerInteraction.Ignore);
+
 
     private void OnJump()
     {
-        if (_isPlayerGrounded)
+        if (isPlayerGrounded)
         {
-            _rigidbody.AddForce(Vector3.up * _jumpHeight, ForceMode.Impulse);
+            playerRigidbody.AddForce(Vector3.up * jumpHeight, ForceMode.Impulse);
         }
     }
 
     private void OnPlayerPaused(InputAction.CallbackContext context)
     {
         if (context.performed)
-            _optionsUI.Toggle();
+            optionsUI.Toggle();
     }
 }
