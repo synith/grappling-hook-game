@@ -12,26 +12,36 @@ public class OptionsUI : MonoBehaviour
 
     private void Awake()
     {
-        TextMeshProUGUI sensitivityValueText = transform.Find("sensitivityValueText").GetComponent<TextMeshProUGUI>();
-        Slider sensitivitySlider = transform.Find("sensitivitySlider").GetComponent<Slider>();
-
-        sensitivitySlider.onValueChanged.AddListener(sliderValue =>
-        {
-            float sensitivityModifierValue = 2f * sliderValue / sensitivitySlider.maxValue;
-
-            _thirdPersonCamera.GetComponent<CameraSensitivity>().SetSensitivity(sensitivityModifierValue);
-            _aimCamera.GetComponent<CameraSensitivity>().SetSensitivity(sensitivityModifierValue);
-
-            sensitivityValueText.SetText(sliderValue.ToString());
-        });
-
-        Button mainMenuBtn = transform.Find("mainMenuBtn").GetComponent<Button>();
-        mainMenuBtn.onClick.AddListener(() => 
-        {
-            GameSceneManager.Load(GameSceneManager.Scene.Main_Menu_Scene);
-        });
+        SensitivitySliderInit();
+        MainMenuButtonInit();
 
         Hide();
+
+        void SensitivitySliderInit()
+        {
+            TextMeshProUGUI sensitivityValueText = transform.Find("sensitivityValueText").GetComponent<TextMeshProUGUI>();
+            Slider sensitivitySlider = transform.Find("sensitivitySlider").GetComponent<Slider>();
+
+            sensitivitySlider.onValueChanged.AddListener(sliderValue =>
+            {
+                float sensitivityModifierValue = 2f * sliderValue / sensitivitySlider.maxValue;
+
+                _thirdPersonCamera.GetComponent<CameraSensitivity>().SetSensitivity(sensitivityModifierValue);
+                _aimCamera.GetComponent<CameraSensitivity>().SetSensitivity(sensitivityModifierValue);
+
+                sensitivityValueText.SetText(sliderValue.ToString());
+            });
+        }
+
+        void MainMenuButtonInit()
+        {
+            Button mainMenuBtn = transform.Find("mainMenuBtn").GetComponent<Button>();
+            mainMenuBtn.onClick.AddListener(() =>
+            {
+                GameSceneManager.Load(GameSceneManager.Scene.Main_Menu_Scene);
+                SoundManager.Instance.PlaySound(SoundManager.Sound.ButtonPress);
+            });
+        }
     }
 
 

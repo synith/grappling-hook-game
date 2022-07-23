@@ -9,10 +9,12 @@ public class MainMenuUI : MonoBehaviour
     {
         transform.Find("playBtn").GetComponent<Button>().onClick.AddListener(() =>
         {
+            SoundManager.Instance.PlaySound(SoundManager.Sound.ButtonPress);
             GameSceneManager.Load(GameSceneManager.Scene.Main_Game_Scene);
         });
         transform.Find("quitBtn").GetComponent<Button>().onClick.AddListener(() =>
         {
+            SoundManager.Instance.PlaySound(SoundManager.Sound.ButtonPress);
 #if UNITY_EDITOR
             UnityEditor.EditorApplication.isPlaying = false;
 #else
