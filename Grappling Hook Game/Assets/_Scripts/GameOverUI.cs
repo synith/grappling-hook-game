@@ -34,7 +34,8 @@ public class GameOverUI : MonoBehaviour
 
     private void AllCollectablesCollected(object sender, System.EventArgs e)
     {
-        Show();        
+        Show();
+        SoundManager.Instance.PlaySound(SoundManager.Sound.GameWon);
     }
 
 

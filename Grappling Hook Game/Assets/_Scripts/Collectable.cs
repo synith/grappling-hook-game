@@ -3,9 +3,11 @@ using UnityEngine;
 public class Collectable : MonoBehaviour
 {
 	[SerializeField]private CollectableTypeSO _collectableType;
-	private bool _isCollected;
+    private bool _isCollected;
 
-	private void OnTriggerEnter(Collider other)
+	//Audio Source that plays pulsating hum noise on awake/loop
+
+    private void OnTriggerEnter(Collider other)
 	{
 		if (other.CompareTag("Player") && !_isCollected)
 			CollectCollectable();
@@ -15,6 +17,7 @@ public class Collectable : MonoBehaviour
 	{
 		_isCollected = true;
 		Destroy(gameObject);
-		CollectableCounter.Instance.CollectableCollected(_collectableType);
-	}
+        CollectableCounter.Instance.CollectableCollected(_collectableType);
+		SoundManager.Instance.PlaySound(SoundManager.Sound.Collected);
+    }
 }

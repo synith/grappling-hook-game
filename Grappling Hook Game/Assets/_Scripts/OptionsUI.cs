@@ -22,25 +22,32 @@ public class OptionsUI : MonoBehaviour
     private void Awake()
     {
         SliderInit();
-
         ButtonInit();
-
+        UpdateText();
         Hide();
+
 
         void SliderInit()
         {
             sensitivityValueText = transform.Find("sensitivityValueText").GetComponent<TextMeshProUGUI>();
             sensitivitySlider = transform.Find("sensitivitySlider").GetComponent<Slider>();
 
+            sensitivitySlider.value = PlayerPrefs.GetFloat("mouseSensitivity", 50f);
+
             sensitivitySlider.onValueChanged.AddListener(sliderValue =>
             {
                 float sensitivityModifierValue = 2f * sliderValue / sensitivitySlider.maxValue;
 
-                thirdPersonCamera?.GetComponent<CameraSensitivity>().SetSensitivity(sensitivityModifierValue);
-                aimCamera?.GetComponent<CameraSensitivity>().SetSensitivity(sensitivityModifierValue);
+                if (thirdPersonCamera != null)
+                    thirdPersonCamera.GetComponent<CameraSensitivity>().SetSensitivity(sensitivityModifierValue);
+                if (aimCamera != null)
+                    aimCamera.GetComponent<CameraSensitivity>().SetSensitivity(sensitivityModifierValue);
                 UpdateText();
+
+                PlayerPrefs.SetFloat("mouseSensitivity", sliderValue);
             });
         }
+
 
         void ButtonInit()
         {
@@ -50,38 +57,43 @@ public class OptionsUI : MonoBehaviour
             transform.Find("mainMenuBtn").GetComponent<Button>().onClick.AddListener(() =>
             {
                 GameSceneManager.Load(GameSceneManager.Scene.Main_Menu_Scene);
-                SoundManager.Instance.PlaySound(SoundManager.Sound.ButtonPress);
+                PlayButtonPressSound();
             });
 
             transform.Find("musicIncreaseBtn").GetComponent<Button>().onClick.AddListener(() =>
             {
                 musicManager.IncreaseVolume();
                 UpdateText();
-                SoundManager.Instance.PlaySound(SoundManager.Sound.ButtonPress);
+                PlayButtonPressSound();
             });
 
             transform.Find("musicDecreaseBtn").GetComponent<Button>().onClick.AddListener(() =>
             {
                 musicManager.DecreaseVolume();
                 UpdateText();
-                SoundManager.Instance.PlaySound(SoundManager.Sound.ButtonPress);
+                PlayButtonPressSound();
             });
 
             transform.Find("soundIncreaseBtn").GetComponent<Button>().onClick.AddListener(() =>
             {
                 SoundManager.Instance.IncreaseVolume();
                 UpdateText();
-                SoundManager.Instance.PlaySound(SoundManager.Sound.ButtonPress);
+                PlayButtonPressSound();
             });
 
             transform.Find("soundDecreaseBtn").GetComponent<Button>().onClick.AddListener(() =>
             {
                 SoundManager.Instance.DecreaseVolume();
                 UpdateText();
-                SoundManager.Instance.PlaySound(SoundManager.Sound.ButtonPress);
+                PlayButtonPressSound();
             });
-        }        
+        }
     }
+
+
+    private void PlayButtonPressSound()
+        => SoundManager.Instance.PlaySound(SoundManager.Sound.ButtonPress);
+
 
     private void UpdateText()
     {
@@ -90,12 +102,14 @@ public class OptionsUI : MonoBehaviour
         musicVolumeText.SetText(Mathf.RoundToInt(musicManager.Volume * 10).ToString());
     }
 
+
     private void Show()
     {
         isPaused = true;
         gameObject.SetActive(true);
         Time.timeScale = 0f;
         Cursor.lockState = CursorLockMode.Confined;
+        SoundManager.Instance.PlaySound(SoundManager.Sound.Pause);
     }
 
 
@@ -105,6 +119,7 @@ public class OptionsUI : MonoBehaviour
         gameObject.SetActive(false);
         Time.timeScale = 1f;
         Cursor.lockState = CursorLockMode.Locked;
+        SoundManager.Instance.PlaySound(SoundManager.Sound.Unpause);
     }
 
 

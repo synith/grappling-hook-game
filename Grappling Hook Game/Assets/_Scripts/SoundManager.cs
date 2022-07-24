@@ -16,6 +16,10 @@ public class SoundManager : MonoBehaviour
         Landing,
         GameWon,
         ButtonPress,
+        Jump,
+        Pause,
+        Unpause,
+        Collected,
     }
     public float Volume { get; private set; } = 0.5f;
 

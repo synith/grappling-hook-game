@@ -151,6 +151,7 @@ public class PlayerController : MonoBehaviour
         if (isPlayerGrounded)
         {
             playerRigidbody.AddForce(Vector3.up * jumpHeight, ForceMode.Impulse);
+            SoundManager.Instance.PlaySound(SoundManager.Sound.Jump);
         }
     }
 

@@ -42,6 +42,8 @@ public class GrapplingHook : MonoBehaviour
     public void StartGrapple()
     {
         IsGrappling = true;
+        SoundManager.Instance.PlaySound(SoundManager.Sound.GrappleShoot);
+        SoundManager.Instance.PlaySound(SoundManager.Sound.GrappleShotFlying);
 
         RaycastHit hit;
         if (Physics.Raycast(cameraTransform.position, cameraTransform.forward, out hit, maxDistance, grappleLayerMask))
@@ -61,6 +63,8 @@ public class GrapplingHook : MonoBehaviour
             joint.massScale = jointMassScaleValue;
 
             lineRenderer.positionCount = 2;
+
+            SoundManager.Instance.PlaySound(SoundManager.Sound.GrappleHit);
         }
     }
 
@@ -74,6 +78,7 @@ public class GrapplingHook : MonoBehaviour
         if (!joint)
             return;
 
+        SoundManager.Instance.PlaySound(SoundManager.Sound.GrappleRelease);
         Destroy(joint);
     }
 
