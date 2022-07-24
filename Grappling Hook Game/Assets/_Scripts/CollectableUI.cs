@@ -5,10 +5,10 @@ using UnityEngine;
 
 public class CollectableUI : MonoBehaviour
 {
-    private TextMeshProUGUI _collectablesAcquiredText;
+    private TextMeshProUGUI collectablesAcquiredText;
     private void Awake()
     {
-        _collectablesAcquiredText = transform.Find("collectablesAcquiredText").GetComponent<TextMeshProUGUI>();
+        collectablesAcquiredText = transform.Find("collectablesAcquiredText").GetComponent<TextMeshProUGUI>();
     }
     private void Start()
     {
@@ -17,7 +17,7 @@ public class CollectableUI : MonoBehaviour
     }
     private void SetCollectableText()
     {
-        _collectablesAcquiredText.text = $"{CollectableCounter.Instance.CollectablesCollectedAmount:00}/{CollectableCounter.Instance.CollectablesTotalAmount:00}";
+        collectablesAcquiredText.text = $"{CollectableCounter.Instance.CollectablesCollectedAmount:00}/{CollectableCounter.Instance.CollectablesTotalAmount:00}";
     }    
     private void CollectableCounter_OnCollecteableCollected(object sender, System.EventArgs e)
     {

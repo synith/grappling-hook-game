@@ -5,58 +5,127 @@ using TMPro;
 
 public class OptionsUI : MonoBehaviour
 {
-    [SerializeField] CinemachineVirtualCamera _thirdPersonCamera;
-    [SerializeField] CinemachineVirtualCamera _aimCamera;
+    [SerializeField] CinemachineVirtualCamera thirdPersonCamera;
+    [SerializeField] CinemachineVirtualCamera aimCamera;
 
-    private bool _isPaused;
+    [SerializeField] private MusicManager musicManager;
+
+    private bool isPaused;
+
+    private TextMeshProUGUI
+        sensitivityValueText,
+        musicVolumeText,
+        soundVolumeText;
+
+    private Slider sensitivitySlider;
 
     private void Awake()
     {
-        TextMeshProUGUI sensitivityValueText = transform.Find("sensitivityValueText").GetComponent<TextMeshProUGUI>();
-        Slider sensitivitySlider = transform.Find("sensitivitySlider").GetComponent<Slider>();
-
-        sensitivitySlider.onValueChanged.AddListener(sliderValue =>
-        {
-            float sensitivityModifierValue = 2f * sliderValue / sensitivitySlider.maxValue;
-
-            _thirdPersonCamera.GetComponent<CameraSensitivity>().SetSensitivity(sensitivityModifierValue);
-            _aimCamera.GetComponent<CameraSensitivity>().SetSensitivity(sensitivityModifierValue);
-
-            sensitivityValueText.SetText(sliderValue.ToString());
-        });
-
-        Button mainMenuBtn = transform.Find("mainMenuBtn").GetComponent<Button>();
-        mainMenuBtn.onClick.AddListener(() => 
-        {
-            GameSceneManager.Load(GameSceneManager.Scene.Main_Menu_Scene);
-        });
-
+        SliderInit();
+        ButtonInit();
+        UpdateText();
         Hide();
+
+
+        void SliderInit()
+        {
+            sensitivityValueText = transform.Find("sensitivityValueText").GetComponent<TextMeshProUGUI>();
+            sensitivitySlider = transform.Find("sensitivitySlider").GetComponent<Slider>();
+
+            sensitivitySlider.value = PlayerPrefs.GetFloat("mouseSensitivity", 50f);
+
+            sensitivitySlider.onValueChanged.AddListener(sliderValue =>
+            {
+                float sensitivityModifierValue = 2f * sliderValue / sensitivitySlider.maxValue;
+
+                if (thirdPersonCamera != null)
+                    thirdPersonCamera.GetComponent<CameraSensitivity>().SetSensitivity(sensitivityModifierValue);
+                if (aimCamera != null)
+                    aimCamera.GetComponent<CameraSensitivity>().SetSensitivity(sensitivityModifierValue);
+                UpdateText();
+
+                PlayerPrefs.SetFloat("mouseSensitivity", sliderValue);
+            });
+        }
+
+
+        void ButtonInit()
+        {
+            musicVolumeText = transform.Find("musicVolumeText").GetComponent<TextMeshProUGUI>();
+            soundVolumeText = transform.Find("soundVolumeText").GetComponent<TextMeshProUGUI>();
+
+            transform.Find("mainMenuBtn").GetComponent<Button>().onClick.AddListener(() =>
+            {
+                GameSceneManager.Load(GameSceneManager.Scene.Main_Menu_Scene);
+                PlayButtonPressSound();
+            });
+
+            transform.Find("musicIncreaseBtn").GetComponent<Button>().onClick.AddListener(() =>
+            {
+                musicManager.IncreaseVolume();
+                UpdateText();
+                PlayButtonPressSound();
+            });
+
+            transform.Find("musicDecreaseBtn").GetComponent<Button>().onClick.AddListener(() =>
+            {
+                musicManager.DecreaseVolume();
+                UpdateText();
+                PlayButtonPressSound();
+            });
+
+            transform.Find("soundIncreaseBtn").GetComponent<Button>().onClick.AddListener(() =>
+            {
+                SoundManager.Instance.IncreaseVolume();
+                UpdateText();
+                PlayButtonPressSound();
+            });
+
+            transform.Find("soundDecreaseBtn").GetComponent<Button>().onClick.AddListener(() =>
+            {
+                SoundManager.Instance.DecreaseVolume();
+                UpdateText();
+                PlayButtonPressSound();
+            });
+        }
     }
 
+
+    private void PlayButtonPressSound()
+        => SoundManager.Instance.PlaySound(SoundManager.Sound.ButtonPress);
+
+
+    private void UpdateText()
+    {
+        sensitivityValueText.SetText(sensitivitySlider.value.ToString());
+        soundVolumeText.SetText(Mathf.RoundToInt(SoundManager.Instance.Volume * 10).ToString());
+        musicVolumeText.SetText(Mathf.RoundToInt(musicManager.Volume * 10).ToString());
+    }
 
 
     private void Show()
     {
-        _isPaused = true;
+        isPaused = true;
         gameObject.SetActive(true);
         Time.timeScale = 0f;
         Cursor.lockState = CursorLockMode.Confined;
+        SoundManager.Instance.PlaySound(SoundManager.Sound.Pause);
     }
 
 
     private void Hide()
     {
-        _isPaused = false;
+        isPaused = false;
         gameObject.SetActive(false);
         Time.timeScale = 1f;
         Cursor.lockState = CursorLockMode.Locked;
+        SoundManager.Instance.PlaySound(SoundManager.Sound.Unpause);
     }
 
 
     public void Toggle()
     {
-        if (_isPaused)
+        if (isPaused)
             Hide();
         else
             Show();

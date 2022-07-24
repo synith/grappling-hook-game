@@ -4,24 +4,20 @@ using UnityEngine;
 
 public class CollectableSpawnManager : MonoBehaviour
 {
-	[SerializeField] private int _sphereAmount;
-	[SerializeField] private int _cubeAmount;
-	[SerializeField] private int _capsuleAmount;
+	[SerializeField] private List<Transform> spawnTransformList;
 
-	[SerializeField] private List<Transform> _spawnTransformList;
-
-	private List<Vector3> _spawnPositionsList;
+	private List<Vector3> spawnPositionsList;
 
 
 	private void Awake()
     {        
-        _spawnPositionsList = new List<Vector3>();
-        foreach (Transform spawnTransform in _spawnTransformList)
+        spawnPositionsList = new List<Vector3>();
+        foreach (Transform spawnTransform in spawnTransformList)
         {
-            _spawnPositionsList.Add(spawnTransform.position);
+            spawnPositionsList.Add(spawnTransform.position);
         }
 
-        List<Vector3> shuffledSpawnPositions = ShufflePositionsList(_spawnPositionsList);
+        List<Vector3> shuffledSpawnPositions = ShufflePositionsList(spawnPositionsList);
         SpawnCollectables(shuffledSpawnPositions);
     }
 
