@@ -2,6 +2,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using Cinemachine;
 using TMPro;
+using System.Collections.Generic;
+using System;
 
 public class OptionsUI : MonoBehaviour
 {
@@ -19,40 +21,45 @@ public class OptionsUI : MonoBehaviour
 
     private Slider sensitivitySlider;
 
+    delegate void ButtonFunctions();
+    List<ButtonFunctions> buttonFunctionsList;
+
+    private void Awake()
+    {
+        musicVolumeText = transform.Find("musicVolumeText").GetComponent<TextMeshProUGUI>();
+        soundVolumeText = transform.Find("soundVolumeText").GetComponent<TextMeshProUGUI>();
+        sensitivityValueText = transform.Find("sensitivityValueText").GetComponent<TextMeshProUGUI>();
+        sensitivitySlider = transform.Find("sensitivitySlider").GetComponent<Slider>();
+    }
     private void Start()
     {
-        SliderInit();
+        SliderInit(sensitivitySlider);
         ButtonInit();
         Hide();
 
 
-        void SliderInit()
+        void SliderInit(Slider sensitivitySlider)
         {
-            sensitivityValueText = transform.Find("sensitivityValueText").GetComponent<TextMeshProUGUI>();
-            sensitivitySlider = transform.Find("sensitivitySlider").GetComponent<Slider>();
-
             sensitivitySlider.value = PlayerPrefs.GetFloat("mouseSensitivity", 50f);
 
             sensitivitySlider.onValueChanged.AddListener(sliderValue =>
             {
-                float sensitivityModifierValue = 2f * sliderValue / sensitivitySlider.maxValue;
-
-                if (thirdPersonCamera != null)
-                    thirdPersonCamera.GetComponent<CameraSensitivity>().SetSensitivity(sensitivityModifierValue);
-                if (aimCamera != null)
-                    aimCamera.GetComponent<CameraSensitivity>().SetSensitivity(sensitivityModifierValue);
+                PlayerPrefs.SetFloat("mouseSensitivity", sliderValue);
                 UpdateText();
 
-                PlayerPrefs.SetFloat("mouseSensitivity", sliderValue);
+                float sensitivityModifierValue = 2f * sliderValue / sensitivitySlider.maxValue;
+                SetCameraSensitivity(thirdPersonCamera, sensitivityModifierValue);
+                SetCameraSensitivity(aimCamera, sensitivityModifierValue);
             });
-        }
 
+            void SetCameraSensitivity(CinemachineVirtualCamera virtualCamera, float sensitivityModifierValue)
+            {
+                thirdPersonCamera.GetComponent<CameraSensitivity>().SetSensitivity(sensitivityModifierValue);
+            }
+        }
 
         void ButtonInit()
         {
-            musicVolumeText = transform.Find("musicVolumeText").GetComponent<TextMeshProUGUI>();
-            soundVolumeText = transform.Find("soundVolumeText").GetComponent<TextMeshProUGUI>();
-
             transform.Find("mainMenuBtn").GetComponent<Button>().onClick.AddListener(() =>
             {
                 GameSceneManager.Load(GameSceneManager.Scene.Main_Menu_Scene);
