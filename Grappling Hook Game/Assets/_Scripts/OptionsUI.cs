@@ -19,11 +19,10 @@ public class OptionsUI : MonoBehaviour
 
     private Slider sensitivitySlider;
 
-    private void Awake()
+    private void Start()
     {
         SliderInit();
         ButtonInit();
-        UpdateText();
         Hide();
 
 
@@ -105,6 +104,7 @@ public class OptionsUI : MonoBehaviour
 
     private void Show()
     {
+        UpdateText();
         isPaused = true;
         gameObject.SetActive(true);
         Time.timeScale = 0f;

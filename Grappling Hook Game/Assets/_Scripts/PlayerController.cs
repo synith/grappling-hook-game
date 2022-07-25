@@ -158,6 +158,8 @@ public class PlayerController : MonoBehaviour
     private void OnPlayerPaused(InputAction.CallbackContext context)
     {
         if (context.performed)
+        {
             optionsUI.Toggle();
+        }            
     }
 }
