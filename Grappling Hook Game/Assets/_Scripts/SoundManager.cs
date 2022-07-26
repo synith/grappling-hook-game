@@ -27,7 +27,6 @@ public class SoundManager : MonoBehaviour
     private Dictionary<Sound, AudioClip> audioClipDictionary;
     
 
-
     private void Awake()
     {
         if (Instance != null)

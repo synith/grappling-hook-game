@@ -10,28 +10,28 @@ public class OptionsUI : MonoBehaviour
     [SerializeField] CinemachineVirtualCamera thirdPersonCamera;
     [SerializeField] CinemachineVirtualCamera aimCamera;
 
-    [SerializeField] private MusicManager musicManager;
+    [SerializeField] MusicManager musicManager;
 
-    private bool isPaused;
+    bool isPaused;
 
-    private TextMeshProUGUI
+    TextMeshProUGUI
         sensitivityValueText,
         musicVolumeText,
         soundVolumeText;
 
-    private Slider sensitivitySlider;
+    Slider sensitivitySlider;
 
-    delegate void ButtonFunctions();
-    List<ButtonFunctions> buttonFunctionsList;
 
-    private void Awake()
+    void Awake()
     {
         musicVolumeText = transform.Find("musicVolumeText").GetComponent<TextMeshProUGUI>();
         soundVolumeText = transform.Find("soundVolumeText").GetComponent<TextMeshProUGUI>();
         sensitivityValueText = transform.Find("sensitivityValueText").GetComponent<TextMeshProUGUI>();
         sensitivitySlider = transform.Find("sensitivitySlider").GetComponent<Slider>();
     }
-    private void Start()
+
+
+    void Start()
     {
         SliderInit(sensitivitySlider);
         ButtonInit();
@@ -41,6 +41,8 @@ public class OptionsUI : MonoBehaviour
         void SliderInit(Slider sensitivitySlider)
         {
             sensitivitySlider.value = PlayerPrefs.GetFloat("mouseSensitivity", 50f);
+            SetCameraSensitivity(thirdPersonCamera, 2f * sensitivitySlider.value / sensitivitySlider.maxValue);
+            SetCameraSensitivity(aimCamera, 2f * sensitivitySlider.value / sensitivitySlider.maxValue);
 
             sensitivitySlider.onValueChanged.AddListener(sliderValue =>
             {
@@ -52,56 +54,63 @@ public class OptionsUI : MonoBehaviour
                 SetCameraSensitivity(aimCamera, sensitivityModifierValue);
             });
 
+
             void SetCameraSensitivity(CinemachineVirtualCamera virtualCamera, float sensitivityModifierValue)
-            {
-                thirdPersonCamera.GetComponent<CameraSensitivity>().SetSensitivity(sensitivityModifierValue);
-            }
+                => virtualCamera.GetComponent<CameraSensitivity>().SetSensitivity(sensitivityModifierValue);
         }
+
 
         void ButtonInit()
         {
-            transform.Find("mainMenuBtn").GetComponent<Button>().onClick.AddListener(() =>
-            {
-                GameSceneManager.Load(GameSceneManager.Scene.Main_Menu_Scene);
-                PlayButtonPressSound();
-            });
+            Action increaseMusicVolume = () => musicManager.IncreaseVolume();
+            Action decreaseMusicVolume = () => musicManager.DecreaseVolume();
+            Action increaseSoundVolume = () => SoundManager.Instance.IncreaseVolume();
+            Action decreaseSoundVolume = () => SoundManager.Instance.DecreaseVolume();
 
-            transform.Find("musicIncreaseBtn").GetComponent<Button>().onClick.AddListener(() =>
-            {
-                musicManager.IncreaseVolume();
-                UpdateText();
-                PlayButtonPressSound();
-            });
+            Dictionary<string, Action> soundButtonActionDictionary = new Dictionary<string, Action>();
 
-            transform.Find("musicDecreaseBtn").GetComponent<Button>().onClick.AddListener(() =>
-            {
-                musicManager.DecreaseVolume();
-                UpdateText();
-                PlayButtonPressSound();
-            });
+            soundButtonActionDictionary.Add("musicIncreaseBtn", increaseMusicVolume);
+            soundButtonActionDictionary.Add("musicDecreaseBtn", decreaseMusicVolume);
+            soundButtonActionDictionary.Add("soundIncreaseBtn", increaseSoundVolume);
+            soundButtonActionDictionary.Add("soundDecreaseBtn", decreaseSoundVolume);
 
-            transform.Find("soundIncreaseBtn").GetComponent<Button>().onClick.AddListener(() =>
+            foreach (string soundButton in soundButtonActionDictionary.Keys)
             {
-                SoundManager.Instance.IncreaseVolume();
-                UpdateText();
-                PlayButtonPressSound();
-            });
+                Action soundButtonAction = soundButtonActionDictionary[soundButton];
+                SetupButton(soundButton, soundButtonAction);
+            }
 
-            transform.Find("soundDecreaseBtn").GetComponent<Button>().onClick.AddListener(() =>
+            SetupSceneTransferButton("mainMenuBtn", GameSceneManager.Scene.Main_Menu_Scene);
+
+
+            void SetupButton(string buttonName, Action buttonAction)
             {
-                SoundManager.Instance.DecreaseVolume();
-                UpdateText();
-                PlayButtonPressSound();
-            });
+                transform.Find(buttonName).GetComponent<Button>().onClick.AddListener(() =>
+                {
+                    buttonAction();
+                    UpdateText();
+                    PlayButtonPressedSound();
+                });
+            }
+
+
+            void SetupSceneTransferButton(string buttonName, GameSceneManager.Scene scene)
+            {
+                transform.Find(buttonName).GetComponent<Button>().onClick.AddListener(() =>
+                {
+                    GameSceneManager.Load(scene);
+                    PlayButtonPressedSound();
+                });
+            }
         }
     }
 
 
-    private void PlayButtonPressSound()
+    void PlayButtonPressedSound()
         => SoundManager.Instance.PlaySound(SoundManager.Sound.ButtonPress);
 
 
-    private void UpdateText()
+    void UpdateText()
     {
         sensitivityValueText.SetText(sensitivitySlider.value.ToString());
         soundVolumeText.SetText(Mathf.RoundToInt(SoundManager.Instance.Volume * 10).ToString());
@@ -109,7 +118,7 @@ public class OptionsUI : MonoBehaviour
     }
 
 
-    private void Show()
+    void Show()
     {
         UpdateText();
         isPaused = true;
@@ -120,7 +129,7 @@ public class OptionsUI : MonoBehaviour
     }
 
 
-    private void Hide()
+    void Hide()
     {
         isPaused = false;
         gameObject.SetActive(false);
@@ -138,5 +147,3 @@ public class OptionsUI : MonoBehaviour
             Show();
     }
 }
-
-
