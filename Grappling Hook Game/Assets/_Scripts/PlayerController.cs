@@ -37,6 +37,10 @@ public class PlayerController : MonoBehaviour
         grappleAction,
         pauseAction;
 
+    private Animator playerAnimator;
+
+    private int isWalkingHash;
+
 
     private void Awake()
     {
@@ -47,6 +51,7 @@ public class PlayerController : MonoBehaviour
         playerInput = GetComponent<PlayerInput>();
 
         groundChecker = transform.Find("groundChecker");
+        playerAnimator = transform.Find("playerModel").GetComponent<Animator>();
 
         moveAction = playerInput.actions["Move"];
         jumpAction = playerInput.actions["Jump"];
@@ -56,6 +61,11 @@ public class PlayerController : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
     }
 
+    private void Start()
+    {
+        isWalkingHash = Animator.StringToHash("isWalking");
+    }
+
 
     private void OnEnable()
     {
@@ -63,7 +73,7 @@ public class PlayerController : MonoBehaviour
         grappleAction.started += _ => hook.StartGrapple();
         pauseAction.performed += OnPlayerPaused;
     }
-    
+
 
     private void OnDisable()
     {
@@ -75,6 +85,17 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
+        bool isWalking = playerAnimator.GetBool(isWalkingHash);
+        bool pressedForward = moveAction.ReadValue<Vector2>().y > 0;
+        if (!isWalking && pressedForward && isPlayerGrounded)
+        {
+            playerAnimator.SetBool(isWalkingHash, true);
+        }
+        if (isWalking && !pressedForward || !isPlayerGrounded)
+        {
+            playerAnimator.SetBool(isWalkingHash, false);
+        }
+
         CheckIfGrapplingStopped();
         RotatePlayerTowardsCamera();
         SetMovementDirectionFromInputAndCamera();
@@ -142,7 +163,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    
+
     private bool CheckIfPlayerGrounded() => Physics.CheckSphere(groundChecker.position, groundDistance, jumpLayer, QueryTriggerInteraction.Ignore);
 
 
@@ -160,6 +181,6 @@ public class PlayerController : MonoBehaviour
         if (context.performed)
         {
             optionsUI.Toggle();
-        }            
+        }
     }
 }
