@@ -4,7 +4,8 @@ using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField] private OptionsUI optionsUI;
+    [SerializeField]
+    private GameEventSO onPlayerPaused;
 
     [SerializeField]
     private float
@@ -18,6 +19,8 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField]
     private LayerMask jumpLayer;
+
+    
 
     private bool isPlayerGrounded;
 
@@ -64,6 +67,7 @@ public class PlayerController : MonoBehaviour
     private void Start()
     {
         isWalkingHash = Animator.StringToHash("isWalking");
+        Time.timeScale = 1f;
     }
 
 
@@ -87,6 +91,11 @@ public class PlayerController : MonoBehaviour
     {
         bool isWalking = playerAnimator.GetBool(isWalkingHash);
         bool pressedForward = moveAction.ReadValue<Vector2>().y > 0;
+        bool pressedBackwards = moveAction.ReadValue<Vector2>().y < 0;
+        bool pressedLeft = moveAction.ReadValue<Vector2>().x < 0;
+        bool pressedRight = moveAction.ReadValue<Vector2>().x > 0;
+
+
         if (!isWalking && pressedForward && isPlayerGrounded)
         {
             playerAnimator.SetBool(isWalkingHash, true);
@@ -180,7 +189,7 @@ public class PlayerController : MonoBehaviour
     {
         if (context.performed)
         {
-            optionsUI.Toggle();
+            onPlayerPaused.TriggerEvent();
         }
     }
 }
