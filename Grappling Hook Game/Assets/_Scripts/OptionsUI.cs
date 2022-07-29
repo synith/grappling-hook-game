@@ -5,6 +5,11 @@ using TMPro;
 using System.Collections.Generic;
 using System;
 
+//public class MusicVolumeTextMeshPro : MonoBehaviour
+//{
+
+//}
+
 public class OptionsUI : MonoBehaviour
 {
     [SerializeField] CinemachineVirtualCamera thirdPersonCamera;
@@ -22,8 +27,11 @@ public class OptionsUI : MonoBehaviour
     Slider sensitivitySlider;
 
 
+    
+
     void Awake()
     {
+        //musicVolumeText = FindObjectOfType<MusicVolumeTextMeshPro>().GetComponent<TextMeshProUGUI>(); // good tip, refactor like this to avoid breaking things with string
         musicVolumeText = transform.Find("musicVolumeText").GetComponent<TextMeshProUGUI>();
         soundVolumeText = transform.Find("soundVolumeText").GetComponent<TextMeshProUGUI>();
         sensitivityValueText = transform.Find("sensitivityValueText").GetComponent<TextMeshProUGUI>();
