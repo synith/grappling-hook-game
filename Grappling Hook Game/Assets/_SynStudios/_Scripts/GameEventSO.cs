@@ -12,7 +12,6 @@ public class GameEventSO : ScriptableObject
         foreach (var listener in listeners)
         {
             listener.OnEventTriggered();
-            Debug.Log("Event attempting to trigger");
         }
     }
 
