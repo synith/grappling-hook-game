@@ -27,7 +27,7 @@ public class OptionsUI : MonoBehaviour
     Slider sensitivitySlider;
 
 
-    
+
 
     void Awake()
     {
@@ -43,7 +43,7 @@ public class OptionsUI : MonoBehaviour
     {
         SliderInit(sensitivitySlider);
         ButtonInit();
-        Hide();
+        Hide(playSound: false);
 
 
         void SliderInit(Slider sensitivitySlider)
@@ -137,13 +137,15 @@ public class OptionsUI : MonoBehaviour
     }
 
 
-    void Hide()
+    void Hide(bool playSound = true)
     {
         isPaused = false;
         gameObject.SetActive(false);
         Time.timeScale = 1f;
         Cursor.lockState = CursorLockMode.Locked;
-        SoundManager.Instance.PlaySound(SoundManager.Sound.Unpause);
+
+        if (playSound)
+            SoundManager.Instance.PlaySound(SoundManager.Sound.Unpause);
     }
 
 
