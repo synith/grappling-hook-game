@@ -75,7 +75,7 @@ public class PlayerController : MonoBehaviour
     {
         jumpAction.performed += _ => OnJump();
         grappleAction.started += _ => hook.StartGrapple();
-        pauseAction.performed += OnPlayerPaused;
+        pauseAction.performed += (context) => OnPlayerPaused(context);
     }
 
 
@@ -83,7 +83,7 @@ public class PlayerController : MonoBehaviour
     {
         jumpAction.performed -= _ => OnJump();
         grappleAction.started -= _ => hook.StartGrapple();
-        pauseAction.performed -= OnPlayerPaused;
+        pauseAction.performed -= (context) => OnPlayerPaused(context);
     }
 
 
