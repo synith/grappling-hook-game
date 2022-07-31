@@ -11,6 +11,17 @@ public class CameraSensitivity : MonoBehaviour
     private float defaultHorizontalSensitivity;
     private float defaultVerticalSensitivity;
 
+    private void OnEnable()
+    {
+        OptionsUI.onSetSensitivity += (value) => SetSensitivity(value);
+    }
+
+    private void OnDisable()
+    {
+        OptionsUI.onSetSensitivity -= (value) => SetSensitivity(value);
+    }
+
+
     private void Awake()
     {
         virtualCamera = GetComponent<CinemachineVirtualCamera>();
@@ -20,7 +31,7 @@ public class CameraSensitivity : MonoBehaviour
         defaultVerticalSensitivity = virtualCameraAimSettings.m_VerticalAxis.m_MaxSpeed;
     }
 
-    public void SetSensitivity(float value)
+    private void SetSensitivity(float value)
     {        
         float horizontalSensitivity = defaultHorizontalSensitivity * value;
         float verticalSensitivity = defaultVerticalSensitivity * value;
