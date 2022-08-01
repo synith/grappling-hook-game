@@ -4,6 +4,15 @@ using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
+    private enum AirState
+    {
+        Grounded,
+        Swinging,
+        Falling,
+    }
+
+    private AirState currentAirState;
+
     [SerializeField]
     private GameEventSO onPlayerPaused;
 
@@ -194,7 +203,7 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        isPlayerGrounded = CheckIfPlayerGrounded();
+        isPlayerGrounded = CheckIfPlayerGrounded(); 
         MovePlayer();
 
         void MovePlayer()

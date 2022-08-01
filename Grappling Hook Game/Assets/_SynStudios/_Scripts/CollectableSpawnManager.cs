@@ -1,15 +1,19 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class CollectableSpawnManager : MonoBehaviour
 {
 	[SerializeField] private List<Transform> spawnTransformList;
 
-	private List<Vector3> spawnPositionsList;
+    private List<Vector3> spawnPositionsList;
+
+    public static event Action<int> OnAllCollectablesSpawned;
 
 
-	private void Awake()
+    private void Awake()
     {        
         spawnPositionsList = new List<Vector3>();
         foreach (Transform spawnTransform in spawnTransformList)
@@ -32,7 +36,7 @@ public class CollectableSpawnManager : MonoBehaviour
     {
         int spawnIndex = 0;
         List<CollectableTypeSO> collectableTypeList = Resources.Load<CollectableTypeListSO>("CollectableTypeListSO").list;
-        
+
         foreach (CollectableTypeSO item in collectableTypeList)
         {
             for (int i = 0; i < item.amountSpawned; i++)
@@ -47,6 +51,6 @@ public class CollectableSpawnManager : MonoBehaviour
                 spawnIndex++;
             }
         }
-        CollectableCounter.Instance.CollectablesTotalAmount = spawnIndex;
+        OnAllCollectablesSpawned?.Invoke(spawnIndex);
     }    
 }

@@ -3,35 +3,46 @@ using UnityEngine;
 
 public class CollectableCounter : MonoBehaviour
 {
-    public static CollectableCounter Instance { get; private set; }
+    public static event Action<int, int> OnCounted;
+    public static event Action OnGameOver;
 
-    public event EventHandler OnCollecteableCollected;
-    public event EventHandler OnGameOver;
+    private int currentCollectablesAmount;
+    private int totalCollectablesAmount;
 
-    public int CollectablesCollectedAmount { get; private set; }
-    public int CollectablesTotalAmount { get; set; }
-
-    private void Awake()
+    private void OnEnable()
     {
-        if (Instance != null)
-        {
-            Destroy(gameObject);
-            return;
-        }
-        Instance = this;
+        Collectable.OnCollected += (collectableType) => CountCollectable(collectableType);
+        CollectableSpawnManager.OnAllCollectablesSpawned += (totalCollectables) => SetTotalCollectablesAmount(totalCollectables);
     }
 
-    public void CollectableCollected(CollectableTypeSO collectableType)
+    private void OnDisable()
     {
-        CollectablesCollectedAmount++;
+        Collectable.OnCollected -= (collectableType) => CountCollectable(collectableType);
+        CollectableSpawnManager.OnAllCollectablesSpawned -= (totalCollectables) => SetTotalCollectablesAmount(totalCollectables);
+    }
 
-        OnCollecteableCollected?.Invoke(this, EventArgs.Empty);
+    private void Start()
+    {
+        OnCounted?.Invoke(currentCollectablesAmount, totalCollectablesAmount);
+    }
+
+
+    private void SetTotalCollectablesAmount(int totalCollectables)
+    {
+        totalCollectablesAmount = totalCollectables;
+    }
+
+    public void CountCollectable(CollectableTypeSO collectableType)
+    {
+        currentCollectablesAmount++;
+
+        OnCounted?.Invoke(currentCollectablesAmount, totalCollectablesAmount);
         Debug.Log($"You've collected a {collectableType.collectableName}");
 
-        if (CollectablesCollectedAmount >= CollectablesTotalAmount)
+        if (currentCollectablesAmount >= totalCollectablesAmount)
         {
             Debug.Log("Game Over");
-            OnGameOver?.Invoke(this, EventArgs.Empty);
+            OnGameOver?.Invoke();
         }
     }
 }

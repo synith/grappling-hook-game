@@ -23,16 +23,22 @@ public class GameOverUI : MonoBehaviour
             GameSceneManager.Load(GameSceneManager.Scene.Main_Menu_Scene);
         });
     }
-
-
-    private void Start()
+    private void OnEnable()
     {
-        CollectableCounter.Instance.OnGameOver += AllCollectablesCollected;
+        CollectableCounter.OnGameOver += () => AllCollectablesCollected();
+    }
+
+    private void OnDisable()
+    {
+        CollectableCounter.OnGameOver -= () => AllCollectablesCollected();
+    }
+    private void Start()
+    {         
         Hide();
     }
 
 
-    private void AllCollectablesCollected(object sender, System.EventArgs e)
+    private void AllCollectablesCollected()
     {
         Show();
         SoundManager.Instance.PlaySound(SoundManager.Sound.GameWon);

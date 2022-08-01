@@ -1,7 +1,10 @@
+using System;
 using UnityEngine;
 
 public class Collectable : MonoBehaviour
 {
+	public static event Action<CollectableTypeSO> OnCollected;
+
 	[SerializeField]private CollectableTypeSO _collectableType;
     private bool _isCollected;
 
@@ -16,8 +19,8 @@ public class Collectable : MonoBehaviour
 	private void CollectCollectable()
 	{
 		_isCollected = true;
-		Destroy(gameObject);
-        CollectableCounter.Instance.CollectableCollected(_collectableType);
+        Destroy(gameObject);
+		OnCollected?.Invoke(_collectableType);
 		SoundManager.Instance.PlaySound(SoundManager.Sound.Collected);
     }
 }
