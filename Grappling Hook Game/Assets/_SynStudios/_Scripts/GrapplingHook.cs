@@ -41,6 +41,10 @@ public class GrapplingHook : MonoBehaviour
 
     public void StartGrapple()
     {
+        if (GameManager.Instance.currentState != GameManager.GameState.Playing)
+            return;
+
+
         IsGrappling = true;
         SoundManager.Instance.PlaySound(SoundManager.Sound.GrappleShoot);
         SoundManager.Instance.PlaySound(SoundManager.Sound.GrappleShotFlying);
@@ -71,6 +75,9 @@ public class GrapplingHook : MonoBehaviour
 
     public void StopGrapple()
     {
+        if (GameManager.Instance.currentState != GameManager.GameState.Playing)
+            return;
+
         IsGrappling = false;
 
         lineRenderer.positionCount = 0;

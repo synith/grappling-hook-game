@@ -74,8 +74,6 @@ public class PlayerController : MonoBehaviour
         jumpAction = playerInput.actions["Jump"];
         grappleAction = playerInput.actions["Grapple"];
         pauseAction = playerInput.actions["Pause"];
-
-        Cursor.lockState = CursorLockMode.Locked;
     }
 
     private void Start()
@@ -84,7 +82,6 @@ public class PlayerController : MonoBehaviour
         isWalkingBackwardsHash = Animator.StringToHash("isWalkingBackwards");
         isWalkingRightHash = Animator.StringToHash("isWalkingRight");
         isWalkingLeftHash = Animator.StringToHash("isWalkingLeft");
-        Time.timeScale = 1f;
     }
 
 
@@ -203,7 +200,7 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        isPlayerGrounded = CheckIfPlayerGrounded(); 
+        isPlayerGrounded = CheckIfPlayerGrounded();
         MovePlayer();
 
         void MovePlayer()
@@ -232,12 +229,17 @@ public class PlayerController : MonoBehaviour
 
     private void OnJump()
     {
-        if (isPlayerGrounded)
-        {
-            playerRigidbody.AddForce(Vector3.up * jumpHeight, ForceMode.Impulse);
-            SoundManager.Instance.PlaySound(SoundManager.Sound.Jump);
-            playerAnimator.SetTrigger("jumpTrigger");
-        }
+        if (!isPlayerGrounded)
+            return;
+
+        if (GameManager.Instance.currentState != GameManager.GameState.Playing)
+            return;
+
+
+        playerRigidbody.AddForce(Vector3.up * jumpHeight, ForceMode.Impulse);
+        SoundManager.Instance.PlaySound(SoundManager.Sound.Jump);
+        playerAnimator.SetTrigger("jumpTrigger");
+
     }
 
     private void OnPlayerPaused(InputAction.CallbackContext context)

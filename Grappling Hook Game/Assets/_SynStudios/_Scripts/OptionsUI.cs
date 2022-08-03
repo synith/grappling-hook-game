@@ -10,8 +10,6 @@ public class OptionsUI : MonoBehaviour
 
     public static Action<float> onSetSensitivity;
 
-    private bool isPaused;
-
     private TextMeshProUGUI
         sensitivityValueText,
         musicVolumeText,
@@ -37,7 +35,7 @@ public class OptionsUI : MonoBehaviour
     {
         SliderInit(sensitivitySlider);
         ButtonInit();
-        Hide(playSound: false);
+        gameObject.SetActive(false);
 
         void SliderInit(Slider sensitivitySlider)
         {
@@ -75,8 +73,7 @@ public class OptionsUI : MonoBehaviour
             SetupButton("musicDecreaseBtn", () => musicManager.DecreaseVolume());
             SetupButton("soundIncreaseBtn", () => SoundManager.Instance.IncreaseVolume());
             SetupButton("soundDecreaseBtn", () => SoundManager.Instance.DecreaseVolume());
-
-            SetupSceneTransferButton("mainMenuBtn", GameSceneManager.Scene.Main_Menu_Scene);
+            SetupButton("mainMenuBtn", () => GameManager.Instance.UpdateGameState(GameManager.GameState.Main_Menu));
 
             void SetupButton(string buttonName, Action buttonAction)
             {
@@ -84,20 +81,9 @@ public class OptionsUI : MonoBehaviour
                 {
                     buttonAction();
                     UpdateOptionsText();
-                    ButtonSound();
+                    SoundManager.Instance.PlaySound(SoundManager.Sound.ButtonPress);
                 });
             }
-
-            void SetupSceneTransferButton(string buttonName, GameSceneManager.Scene scene)
-            {
-                transform.Find(buttonName).GetComponent<Button>().onClick.AddListener(() =>
-                {
-                    GameSceneManager.Load(scene);
-                    ButtonSound();
-                });
-            }
-
-            void ButtonSound() => SoundManager.Instance.PlaySound(SoundManager.Sound.ButtonPress);
         }
     }
 
@@ -110,34 +96,31 @@ public class OptionsUI : MonoBehaviour
     }
 
 
-    void Show()
+    void Pause()
     {
         UpdateOptionsText();
-        isPaused = true;
+        GameManager.Instance.UpdateGameState(GameManager.GameState.Paused);
         gameObject.SetActive(true);
-        Time.timeScale = 0f;
-        Cursor.lockState = CursorLockMode.Confined;
-        SoundManager.Instance.PlaySound(SoundManager.Sound.Pause);
+        
     }
 
 
-    void Hide(bool playSound = true)
+    void Unpause()
     {
-        isPaused = false;
+        GameManager.Instance.UpdateGameState(GameManager.GameState.Playing);
         gameObject.SetActive(false);
-        Time.timeScale = 1f;
-        Cursor.lockState = CursorLockMode.Locked;
-
-        if (playSound)
-            SoundManager.Instance.PlaySound(SoundManager.Sound.Unpause);
     }
 
 
     public void Toggle()
     {
-        if (isPaused)
-            Hide();
+        if (GameManager.Instance.currentState == GameManager.GameState.Paused)
+        {            
+            Unpause();
+        }
         else
-            Show();
+        {            
+            Pause();
+        }
     }
 }

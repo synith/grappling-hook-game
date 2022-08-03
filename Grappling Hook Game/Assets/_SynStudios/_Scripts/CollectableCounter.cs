@@ -4,7 +4,7 @@ using UnityEngine;
 public class CollectableCounter : MonoBehaviour
 {
     public static event Action<int, int> OnCounted;
-    public static event Action OnGameOver;
+    public static event Action OnAllCollected;
 
     private int currentCollectablesAmount;
     private int totalCollectablesAmount;
@@ -42,7 +42,7 @@ public class CollectableCounter : MonoBehaviour
         if (currentCollectablesAmount >= totalCollectablesAmount)
         {
             Debug.Log("Game Over");
-            OnGameOver?.Invoke();
+            OnAllCollected?.Invoke();
         }
     }
 }

@@ -14,49 +14,34 @@ public class GameOverUI : MonoBehaviour
         retryBtn = transform.Find("retryBtn").GetComponent<Button>();
         mainMenuBtn = transform.Find("mainMenuBtn").GetComponent<Button>();
 
-        retryBtn.onClick.AddListener(() => 
+        retryBtn.onClick.AddListener(() =>
         {
-            GameSceneManager.Load(GameSceneManager.Scene.Main_Game_Scene);
+            GameManager.Instance.UpdateGameState(GameManager.GameState.Playing);          
         });
-        mainMenuBtn.onClick.AddListener(() => 
+        mainMenuBtn.onClick.AddListener(() =>
         {
-            GameSceneManager.Load(GameSceneManager.Scene.Main_Menu_Scene);
+            GameManager.Instance.UpdateGameState(GameManager.GameState.Main_Menu);
         });
     }
+
     private void OnEnable()
     {
-        CollectableCounter.OnGameOver += () => AllCollectablesCollected();
+        CollectableCounter.OnAllCollected += () => FinishGame();
     }
 
     private void OnDisable()
     {
-        CollectableCounter.OnGameOver -= () => AllCollectablesCollected();
+        CollectableCounter.OnAllCollected -= () => FinishGame();
     }
+
     private void Start()
-    {         
-        Hide();
-    }
-
-
-    private void AllCollectablesCollected()
     {
-        Show();
-        SoundManager.Instance.PlaySound(SoundManager.Sound.GameWon);
-    }
-
-
-    public void Show()
-    {
-        Cursor.lockState = CursorLockMode.None;
-        gameObject.SetActive(true);
-        Time.timeScale = 0f;
-    }
-
-
-    public void Hide()
-    {
-        Cursor.lockState = CursorLockMode.Locked;
         gameObject.SetActive(false);
-        Time.timeScale = 1f;
+    }
+
+    private void FinishGame()
+    {
+        gameObject.SetActive(true);
+        GameManager.Instance.UpdateGameState(GameManager.GameState.Finished);
     }
 }

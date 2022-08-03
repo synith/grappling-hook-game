@@ -8,8 +8,6 @@ public class Collectable : MonoBehaviour
 	[SerializeField]private CollectableTypeSO _collectableType;
     private bool _isCollected;
 
-	//Audio Source that plays pulsating hum noise on awake/loop
-
     private void OnTriggerEnter(Collider other)
 	{
 		if (other.CompareTag("Player") && !_isCollected)

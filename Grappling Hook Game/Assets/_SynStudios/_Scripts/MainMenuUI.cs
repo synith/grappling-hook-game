@@ -5,12 +5,12 @@ using UnityEngine.UI;
 
 public class MainMenuUI : MonoBehaviour
 {
-    private void Awake()
+    private void Start()
     {
         transform.Find("playBtn").GetComponent<Button>().onClick.AddListener(() =>
         {
             SoundManager.Instance.PlaySound(SoundManager.Sound.ButtonPress);
-            GameSceneManager.Load(GameSceneManager.Scene.Main_Game_Scene);
+            GameManager.Instance.UpdateGameState(GameManager.GameState.Playing);            
         });
         transform.Find("quitBtn").GetComponent<Button>().onClick.AddListener(() =>
         {
