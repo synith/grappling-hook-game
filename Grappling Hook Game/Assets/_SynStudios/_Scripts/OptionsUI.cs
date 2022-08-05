@@ -6,9 +6,7 @@ using System;
 
 public class OptionsUI : MonoBehaviour
 {
-    [SerializeField] MusicManager musicManager;
-
-    public static Action<float> onSetSensitivity;
+    public static event Action<float> onSetSensitivity;
 
     private TextMeshProUGUI
         sensitivityValueText,
@@ -62,17 +60,18 @@ public class OptionsUI : MonoBehaviour
 
                     onSetSensitivity?.Invoke(sensitivityValue);
                 });
-
             }
         }
 
 
         void ButtonInit()
         {
-            SetupButton("musicIncreaseBtn", () => musicManager.IncreaseVolume());
-            SetupButton("musicDecreaseBtn", () => musicManager.DecreaseVolume());
+
+            SetupButton("musicIncreaseBtn", () => MusicManager.Instance.IncreaseVolume());
+            SetupButton("musicDecreaseBtn", () => MusicManager.Instance.DecreaseVolume());
             SetupButton("soundIncreaseBtn", () => SoundManager.Instance.IncreaseVolume());
             SetupButton("soundDecreaseBtn", () => SoundManager.Instance.DecreaseVolume());
+
             SetupButton("mainMenuBtn", () => GameManager.Instance.UpdateGameState(GameManager.GameState.Main_Menu));
 
             void SetupButton(string buttonName, Action buttonAction)
@@ -92,7 +91,7 @@ public class OptionsUI : MonoBehaviour
     {
         sensitivityValueText.SetText(sensitivitySlider.value.ToString());
         soundVolumeText.SetText(Mathf.RoundToInt(SoundManager.Instance.Volume * 10).ToString());
-        musicVolumeText.SetText(Mathf.RoundToInt(musicManager.Volume * 10).ToString());
+        musicVolumeText.SetText(Mathf.RoundToInt(MusicManager.Instance.Volume * 10).ToString());
     }
 
 
@@ -103,7 +102,6 @@ public class OptionsUI : MonoBehaviour
         gameObject.SetActive(true);
         
     }
-
 
     void Unpause()
     {

@@ -21,15 +21,10 @@ public class CollectableCounter : MonoBehaviour
         CollectableSpawnManager.OnAllCollectablesSpawned -= (totalCollectables) => SetTotalCollectablesAmount(totalCollectables);
     }
 
-    private void Start()
-    {
-        OnCounted?.Invoke(currentCollectablesAmount, totalCollectablesAmount);
-    }
-
-
     private void SetTotalCollectablesAmount(int totalCollectables)
     {
         totalCollectablesAmount = totalCollectables;
+        OnCounted?.Invoke(currentCollectablesAmount, totalCollectablesAmount);
     }
 
     public void CountCollectable(CollectableTypeSO collectableType)

@@ -14,17 +14,19 @@ public class CollectableSpawnManager : MonoBehaviour
 
 
     private void Awake()
-    {        
+    {
         spawnPositionsList = new List<Vector3>();
         foreach (Transform spawnTransform in spawnTransformList)
         {
             spawnPositionsList.Add(spawnTransform.position);
         }
+    }
 
+    private void Start()
+    {
         List<Vector3> shuffledSpawnPositions = ShufflePositionsList(spawnPositionsList);
         SpawnCollectables(shuffledSpawnPositions);
     }
-
 
     private List<Vector3> ShufflePositionsList(List<Vector3> spawnPositionsList)
     {

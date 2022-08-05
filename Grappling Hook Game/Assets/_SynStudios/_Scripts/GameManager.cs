@@ -30,11 +30,6 @@ public class GameManager : MonoBehaviour
         DontDestroyOnLoad(this);
     }
 
-    private void Start()
-    {
-        UpdateGameState(GameState.Main_Menu);
-    }
-
     public void UpdateGameState(GameState newState)
     {
         lastState = currentState;
@@ -65,6 +60,7 @@ public class GameManager : MonoBehaviour
     {
         if (lastState == GameState.Paused || lastState == GameState.Finished)
         {
+            MusicManager.Instance.PlayMusic(MusicManager.Music.Menu);
             GameSceneManager.Load(GameSceneManager.Scene.Menu_Scene);
         }
     }
@@ -89,7 +85,8 @@ public class GameManager : MonoBehaviour
 
             if (lastState != GameState.Paused)
             {
-                GameSceneManager.Load(GameSceneManager.Scene.Game_Scene);
+                MusicManager.Instance.PlayMusic(MusicManager.Music.Game);
+                GameSceneManager.Load(GameSceneManager.Scene.Game_Scene);                
             }
         }
     }

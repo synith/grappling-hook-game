@@ -4,15 +4,6 @@ using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
-    private enum AirState
-    {
-        Grounded,
-        Swinging,
-        Falling,
-    }
-
-    private AirState currentAirState;
-
     [SerializeField]
     private GameEventSO onPlayerPaused;
 
@@ -28,8 +19,6 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField]
     private LayerMask jumpLayer;
-
-
 
     private bool isPlayerGrounded;
 
@@ -51,10 +40,11 @@ public class PlayerController : MonoBehaviour
 
     private Animator playerAnimator;
 
-    private int isWalkingForwardHash;
-    private int isWalkingBackwardsHash;
-    private int isWalkingRightHash;
-    private int isWalkingLeftHash;
+    private int
+        isWalkingForwardHash,
+        isWalkingBackwardsHash,
+        isWalkingRightHash,
+        isWalkingLeftHash;
 
     private const float DEAD_ZONE = 0.05f;
 

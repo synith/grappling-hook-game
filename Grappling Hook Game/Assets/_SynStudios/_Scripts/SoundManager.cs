@@ -24,8 +24,9 @@ public class SoundManager : MonoBehaviour
     public float Volume { get; private set; } = 0.5f;
 
     private AudioSource audioSource;
-    private Dictionary<Sound, AudioClip> audioClipDictionary;
-    
+    private Dictionary<Sound, AudioClip> soundAudioClipDictionary;
+
+    private const string SOUND_VOLUME = "soundVolume";
 
     private void Awake()
     {
@@ -37,32 +38,34 @@ public class SoundManager : MonoBehaviour
         Instance = this;
         DontDestroyOnLoad(gameObject);
 
-        Volume = PlayerPrefs.GetFloat("soundVolume", 0.5f);
+        Volume = PlayerPrefs.GetFloat(SOUND_VOLUME, 0.5f);
 
         audioSource = GetComponent<AudioSource>();
-        audioClipDictionary = new Dictionary<Sound, AudioClip>();
+        audioSource.volume = Volume;
+
+        soundAudioClipDictionary = new Dictionary<Sound, AudioClip>();
 
         foreach (Sound sound in System.Enum.GetValues(typeof(Sound)))
         {
-            audioClipDictionary[sound] = Resources.Load<AudioClip>(sound.ToString());
+            soundAudioClipDictionary[sound] = Resources.Load<AudioClip>(sound.ToString());
         }
     }
 
     public void PlaySound(Sound sound)
     {
-        audioSource.PlayOneShot(audioClipDictionary[sound], Volume);
+        audioSource.PlayOneShot(soundAudioClipDictionary[sound], Volume);
     }
     public void IncreaseVolume()
     {
         Volume += 0.1f;
         Volume = Mathf.Clamp01(Volume);
-        PlayerPrefs.SetFloat("soundVolume", Volume);
+        PlayerPrefs.SetFloat(SOUND_VOLUME, Volume);
     }
     public void DecreaseVolume()
     {
         Volume -= 0.1f;
         Volume = Mathf.Clamp01(Volume);
-        PlayerPrefs.SetFloat("soundVolume", Volume);
+        PlayerPrefs.SetFloat(SOUND_VOLUME, Volume);
     }
 
 }
