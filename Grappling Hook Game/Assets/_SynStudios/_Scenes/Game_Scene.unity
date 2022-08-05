@@ -5316,108 +5316,6 @@ Mesh:
     offset: 0
     size: 0
     path: 
---- !u!1001 &321627910
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 1975213808}
-    m_Modifications:
-    - target: {fileID: 319025688355854820, guid: de9cc7f99845bf54a92fdd65090bb08a,
-        type: 3}
-      propertyPath: m_Name
-      value: MusicManager
-      objectReference: {fileID: 0}
-    - target: {fileID: 319025688355854822, guid: de9cc7f99845bf54a92fdd65090bb08a,
-        type: 3}
-      propertyPath: Loop
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 319025688355854822, guid: de9cc7f99845bf54a92fdd65090bb08a,
-        type: 3}
-      propertyPath: m_Volume
-      value: 0.25
-      objectReference: {fileID: 0}
-    - target: {fileID: 319025688355854822, guid: de9cc7f99845bf54a92fdd65090bb08a,
-        type: 3}
-      propertyPath: m_audioClip
-      value: 
-      objectReference: {fileID: 8300000, guid: 4e64b0cc748a9e447bde74954721868f, type: 3}
-    - target: {fileID: 319025688355854823, guid: de9cc7f99845bf54a92fdd65090bb08a,
-        type: 3}
-      propertyPath: m_RootOrder
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 319025688355854823, guid: de9cc7f99845bf54a92fdd65090bb08a,
-        type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 319025688355854823, guid: de9cc7f99845bf54a92fdd65090bb08a,
-        type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 319025688355854823, guid: de9cc7f99845bf54a92fdd65090bb08a,
-        type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 319025688355854823, guid: de9cc7f99845bf54a92fdd65090bb08a,
-        type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 319025688355854823, guid: de9cc7f99845bf54a92fdd65090bb08a,
-        type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 319025688355854823, guid: de9cc7f99845bf54a92fdd65090bb08a,
-        type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 319025688355854823, guid: de9cc7f99845bf54a92fdd65090bb08a,
-        type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 319025688355854823, guid: de9cc7f99845bf54a92fdd65090bb08a,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 319025688355854823, guid: de9cc7f99845bf54a92fdd65090bb08a,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 319025688355854823, guid: de9cc7f99845bf54a92fdd65090bb08a,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: de9cc7f99845bf54a92fdd65090bb08a, type: 3}
---- !u!4 &321627911 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 319025688355854823, guid: de9cc7f99845bf54a92fdd65090bb08a,
-    type: 3}
-  m_PrefabInstance: {fileID: 321627910}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &321627912 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 319025688355854841, guid: de9cc7f99845bf54a92fdd65090bb08a,
-    type: 3}
-  m_PrefabInstance: {fileID: 321627910}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b8e2cc6aeedb7684c84092a095c6692c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!43 &321760917
 Mesh:
   m_ObjectHideFlags: 0
@@ -14131,7 +14029,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3e6220932a7304f40b59117123ee1378, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  musicManager: {fileID: 321627912}
 --- !u!43 &930334672
 Mesh:
   m_ObjectHideFlags: 0
@@ -35744,7 +35641,6 @@ Transform:
   m_Children:
   - {fileID: 174604159}
   - {fileID: 1281528335}
-  - {fileID: 321627911}
   m_Father: {fileID: 1048905478}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
