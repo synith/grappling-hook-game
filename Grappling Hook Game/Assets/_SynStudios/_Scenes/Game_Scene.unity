@@ -39225,7 +39225,18 @@ PrefabInstance:
       propertyPath: m_Camera
       value: 
       objectReference: {fileID: 330585545}
-    m_RemovedComponents: []
+    - target: {fileID: 3304223533314383440, guid: ae1ac73ef969caa4dbc83bdf653e8517,
+        type: 3}
+      propertyPath: jumpHeight
+      value: 700
+      objectReference: {fileID: 0}
+    - target: {fileID: 3926637534212402016, guid: ae1ac73ef969caa4dbc83bdf653e8517,
+        type: 3}
+      propertyPath: cameraTransform
+      value: 
+      objectReference: {fileID: 330585546}
+    m_RemovedComponents:
+    - {fileID: 1593871968541158447, guid: ae1ac73ef969caa4dbc83bdf653e8517, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: ae1ac73ef969caa4dbc83bdf653e8517, type: 3}
 --- !u!1001 &5274957412714356929
 PrefabInstance:
@@ -41611,18 +41622,6 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 5167941175127015068}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &5883571393325847219 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 1593871968541158447, guid: ae1ac73ef969caa4dbc83bdf653e8517,
-    type: 3}
-  m_PrefabInstance: {fileID: 5167941175127015068}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &6638105529306735840
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -41914,7 +41913,7 @@ PrefabInstance:
         type: 3}
       propertyPath: _playerInput
       value: 
-      objectReference: {fileID: 5883571393325847219}
+      objectReference: {fileID: 0}
     - target: {fileID: 7002396619997023087, guid: a530f011f23e82b418825d878f2cd2e5,
         type: 3}
       propertyPath: _thirdPersonCanvas

@@ -8,8 +8,6 @@ using System;
 public class CameraSwitch : MonoBehaviour
 {
     [SerializeField]
-    private PlayerInput _playerInput;
-    [SerializeField]
     private int _priorityBoostAmount = 10;
     [SerializeField]
     private Canvas _thirdPersonCanvas;
@@ -17,36 +15,41 @@ public class CameraSwitch : MonoBehaviour
     private Canvas _aimCanvas;
 
     private CinemachineVirtualCamera _virtualCamera;
+    private PlayerControls playerControls;
 
     private InputAction _aimAction;
-    
+
+
 
     private void Awake()
     {
+        playerControls = new PlayerControls();
         _virtualCamera = GetComponent<CinemachineVirtualCamera>();
-        _aimAction = _playerInput.actions["Aim"];
+        _aimAction = playerControls.Player.Aim;
         _aimCanvas.gameObject.SetActive(false);
     }
 
     private void OnEnable()
     {
-        _aimAction.performed += _ => StartAim();
-        _aimAction.canceled += _ => CancelAim();
+        playerControls.Player.Enable();
+        _aimAction.performed += StartAim;
+        _aimAction.canceled += CancelAim;
     }
     private void OnDisable()
     {
-        _aimAction.performed -= _ => StartAim();
-        _aimAction.canceled -= _ => CancelAim();
+        _aimAction.performed -= StartAim;
+        _aimAction.canceled -= CancelAim;
+        playerControls.Player.Disable();
     }
 
-    private void CancelAim()
+    private void CancelAim(InputAction.CallbackContext context)
     {
         _virtualCamera.Priority -= _priorityBoostAmount;
         _aimCanvas.gameObject.SetActive(false);
         _thirdPersonCanvas.gameObject.SetActive(true);
     }
 
-    private void StartAim()
+    private void StartAim(InputAction.CallbackContext context)
     {
         _virtualCamera.Priority += _priorityBoostAmount;
         _thirdPersonCanvas.gameObject.SetActive(false);
