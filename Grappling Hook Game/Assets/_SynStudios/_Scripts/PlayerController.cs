@@ -30,7 +30,7 @@ public class PlayerController : MonoBehaviour
     private Transform cameraTransform;
     private Transform groundChecker;
 
-    private PlayerInput playerInput;
+    private PlayerControls playerControls;
 
     private InputAction
         moveAction,
@@ -53,17 +53,18 @@ public class PlayerController : MonoBehaviour
     {
         cameraTransform = Camera.main.transform;
 
+        playerControls = new PlayerControls();
+
         hook = GetComponent<GrapplingHook>();
         playerRigidbody = GetComponent<Rigidbody>();
-        playerInput = GetComponent<PlayerInput>();
 
         groundChecker = transform.Find("groundChecker");
         playerAnimator = transform.Find("playerModel").GetComponent<Animator>();
 
-        moveAction = playerInput.actions["Move"];
-        jumpAction = playerInput.actions["Jump"];
-        grappleAction = playerInput.actions["Grapple"];
-        pauseAction = playerInput.actions["Pause"];
+        moveAction = playerControls.Player.Move;
+        jumpAction = playerControls.Player.Jump;
+        grappleAction = playerControls.Player.Grapple;
+        pauseAction = playerControls.Player.Pause;
     }
 
     private void Start()
@@ -77,17 +78,21 @@ public class PlayerController : MonoBehaviour
 
     private void OnEnable()
     {
-        jumpAction.performed += _ => OnJump();
-        grappleAction.started += _ => hook.StartGrapple();
-        pauseAction.performed += (context) => OnPlayerPaused(context);
+        playerControls.Player.Enable();
+
+        jumpAction.performed += Jump;
+        grappleAction.started += Grapple;
+        pauseAction.performed += Pause;
     }
 
 
     private void OnDisable()
     {
-        jumpAction.performed -= _ => OnJump();
-        grappleAction.started -= _ => hook.StartGrapple();
-        pauseAction.performed -= (context) => OnPlayerPaused(context);
+        jumpAction.performed -= Jump;
+        grappleAction.started -= Grapple;
+        pauseAction.performed -= Pause;
+
+        playerControls.Player.Disable();
     }
 
 
@@ -216,9 +221,18 @@ public class PlayerController : MonoBehaviour
 
     private bool CheckIfPlayerGrounded() => Physics.CheckSphere(groundChecker.position, groundDistance, jumpLayer, QueryTriggerInteraction.Ignore);
 
-
-    private void OnJump()
+    private void Pause(InputAction.CallbackContext context)
     {
+        if (context.performed)
+        {
+            onPlayerPaused.TriggerEvent();
+        }
+    }
+    private void Jump(InputAction.CallbackContext context)
+    {
+        if (!context.performed)
+            return;
+
         if (!isPlayerGrounded)
             return;
 
@@ -232,11 +246,11 @@ public class PlayerController : MonoBehaviour
 
     }
 
-    private void OnPlayerPaused(InputAction.CallbackContext context)
+    private void Grapple(InputAction.CallbackContext context)
     {
-        if (context.performed)
+        if (context.started)
         {
-            onPlayerPaused.TriggerEvent();
+            hook.StartGrapple();
         }
     }
 }

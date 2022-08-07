@@ -97,16 +97,16 @@ public class OptionsUI : MonoBehaviour
 
     void Pause()
     {
+
+        gameObject.SetActive(true);
         UpdateOptionsText();
         GameManager.Instance.UpdateGameState(GameManager.GameState.Paused);
-        gameObject.SetActive(true);
-        
     }
 
     void Unpause()
     {
-        GameManager.Instance.UpdateGameState(GameManager.GameState.Playing);
         gameObject.SetActive(false);
+        GameManager.Instance.UpdateGameState(GameManager.GameState.Playing);
     }
 
 
