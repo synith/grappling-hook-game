@@ -18,7 +18,6 @@ public class GameManager : MonoBehaviour
 
     public static GameManager Instance { get; private set; }
 
-    public static event Action<GameState> OnGameStateChanged;
 
     private void Awake()
     {
@@ -53,8 +52,6 @@ public class GameManager : MonoBehaviour
             default:
                 throw new ArgumentOutOfRangeException(nameof(newState), newState, null);
         }
-
-        OnGameStateChanged?.Invoke(newState);
     }
 
     private void HandleMainMenu()
