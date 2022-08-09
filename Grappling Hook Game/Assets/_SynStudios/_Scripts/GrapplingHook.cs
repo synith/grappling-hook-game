@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GrapplingHook : MonoBehaviour
 {
@@ -15,6 +16,11 @@ public class GrapplingHook : MonoBehaviour
     private LayerMask grappleLayerMask;
     [SerializeField]
     private Transform shootPointTransform;
+
+    [SerializeField] Image aimReticle;
+    [SerializeField] Image hipFireReticle;
+
+    private Color reticleColor;
 
     public bool IsGrappling { get; private set; }
 
@@ -36,8 +42,21 @@ public class GrapplingHook : MonoBehaviour
     private void LateUpdate()
     {
         DrawRope();
-    }
 
+        RaycastHit hit;
+        if (Physics.Raycast(cameraTransform.position, cameraTransform.forward, out hit, maxDistance, grappleLayerMask))
+        {
+            reticleColor = Color.green;
+        }
+        else
+        {
+            reticleColor = Color.red;
+        }
+
+        hipFireReticle.color = reticleColor;
+        aimReticle.color = reticleColor;
+
+    }
 
     public void StartGrapple()
     {
