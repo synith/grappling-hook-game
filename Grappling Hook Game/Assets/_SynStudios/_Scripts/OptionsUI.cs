@@ -7,17 +7,23 @@ using System;
 public class OptionsUI : MonoBehaviour
 {
     public static event Action<float> onSetSensitivity;
+    public static event Action<bool> onInvertVerticalCamera;
 
     private TextMeshProUGUI
         sensitivityValueText,
         musicVolumeText,
         soundVolumeText;
 
+    private Toggle invertCameraToggle;
+
     private Slider sensitivitySlider;
+
+    private bool cameraInverted;
 
     private const float SENSITIVITY_COEFFICIENT = 2f;
     private const float DEFAULT_SENSITIVITY = 50f;
     private const string MOUSE_SENSITIVITY = "mouseSensitivity";
+    private const string CAMERA_INVERTED = "cameraInverted";
 
 
     void Awake()
@@ -26,13 +32,27 @@ public class OptionsUI : MonoBehaviour
         soundVolumeText = transform.Find("soundVolumeText").GetComponent<TextMeshProUGUI>();
         sensitivityValueText = transform.Find("sensitivityValueText").GetComponent<TextMeshProUGUI>();
         sensitivitySlider = transform.Find("sensitivitySlider").GetComponent<Slider>();
-    }
+        invertCameraToggle = transform.Find("invertCameraToggle").GetComponent<Toggle>();
 
+        cameraInverted = intToBool(PlayerPrefs.GetInt(CAMERA_INVERTED));
+        onInvertVerticalCamera?.Invoke(cameraInverted);
+    }
 
     void Start()
     {
         SliderInit(sensitivitySlider);
         ButtonInit();
+
+        invertCameraToggle.onValueChanged.AddListener((bool set) =>
+        {
+            PlayerPrefs.SetInt(CAMERA_INVERTED, boolToInt(invertCameraToggle.isOn));
+            onInvertVerticalCamera?.Invoke(set);
+        });
+
+        onInvertVerticalCamera?.Invoke(cameraInverted);
+        invertCameraToggle.isOn = cameraInverted;
+
+
         gameObject.SetActive(false);
 
         void SliderInit(Slider sensitivitySlider)
@@ -62,7 +82,6 @@ public class OptionsUI : MonoBehaviour
                 });
             }
         }
-
 
         void ButtonInit()
         {
@@ -113,12 +132,33 @@ public class OptionsUI : MonoBehaviour
     public void Toggle()
     {
         if (GameManager.Instance.currentState == GameManager.GameState.Paused)
-        {            
+        {
             Unpause();
         }
         else
-        {            
+        {
             Pause();
         }
+    }
+
+    int boolToInt(bool value)
+    {
+        if (value)
+        {
+            return 1;
+        }
+        else
+        {
+            return 0;
+        }
+    }
+
+    bool intToBool(int value)
+    {
+        if (value != 0)
+        {
+            return true;
+        }
+        else return false;
     }
 }
