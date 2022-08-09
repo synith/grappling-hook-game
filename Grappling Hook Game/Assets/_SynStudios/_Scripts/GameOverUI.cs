@@ -24,22 +24,12 @@ public class GameOverUI : MonoBehaviour
         });
     }
 
-    private void OnEnable()
-    {
-        CollectableCounter.OnAllCollected += () => FinishGame();
-    }
-
-    private void OnDisable()
-    {
-        CollectableCounter.OnAllCollected -= () => FinishGame();
-    }
-
     private void Start()
     {
         gameObject.SetActive(false);
     }
 
-    private void FinishGame()
+    public void FinishGame()
     {
         gameObject.SetActive(true);
         GameManager.Instance.UpdateGameState(GameManager.GameState.Finished);

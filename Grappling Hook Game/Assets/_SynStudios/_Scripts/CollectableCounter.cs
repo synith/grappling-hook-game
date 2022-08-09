@@ -3,21 +3,21 @@ using UnityEngine;
 
 public class CollectableCounter : MonoBehaviour
 {
+    GameOverUI gameOverUI;
+
     public static event Action<int, int> OnCounted;
-    public static event Action OnAllCollected;
 
     private int currentCollectablesAmount;
     private int totalCollectablesAmount;
 
     private void OnEnable()
     {
-        Collectable.OnCollected += (collectableType) => CountCollectable(collectableType);
+        gameOverUI = FindObjectOfType<GameOverUI>();
         CollectableSpawnManager.OnAllCollectablesSpawned += (totalCollectables) => SetTotalCollectablesAmount(totalCollectables);
     }
 
     private void OnDisable()
     {
-        Collectable.OnCollected -= (collectableType) => CountCollectable(collectableType);
         CollectableSpawnManager.OnAllCollectablesSpawned -= (totalCollectables) => SetTotalCollectablesAmount(totalCollectables);
     }
 
@@ -36,8 +36,9 @@ public class CollectableCounter : MonoBehaviour
 
         if (currentCollectablesAmount >= totalCollectablesAmount)
         {
+            currentCollectablesAmount = 0;
             Debug.Log("Game Over");
-            OnAllCollected?.Invoke();
+            gameOverUI.FinishGame();
         }
     }
 }

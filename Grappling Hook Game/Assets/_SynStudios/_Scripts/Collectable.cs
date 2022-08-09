@@ -3,22 +3,31 @@ using UnityEngine;
 
 public class Collectable : MonoBehaviour
 {
-	public static event Action<CollectableTypeSO> OnCollected;
+    [SerializeField]
+    CollectableTypeSO _collectableType;
 
-	[SerializeField]private CollectableTypeSO _collectableType;
-    private bool _isCollected;
+	CollectableCounter _collectableCounter;
 
-    private void OnTriggerEnter(Collider other)
+	bool _isCollected;
+
+    void OnEnable()
+    {
+		_collectableCounter = FindObjectOfType<CollectableCounter>();
+	}
+
+    void OnTriggerEnter(Collider other)
 	{
-		if (other.CompareTag("Player") && !_isCollected)
+		if (!_isCollected && other.CompareTag("Player"))
 			CollectCollectable();
 	}
 
-	private void CollectCollectable()
+	void CollectCollectable()
 	{
 		_isCollected = true;
         Destroy(gameObject);
-		OnCollected?.Invoke(_collectableType);
-		SoundManager.Instance.PlaySound(SoundManager.Sound.Collected);
-    }
+
+        SoundManager.Instance.PlaySound(SoundManager.Sound.Collected);
+
+		_collectableCounter.CountCollectable(_collectableType);
+	}
 }
