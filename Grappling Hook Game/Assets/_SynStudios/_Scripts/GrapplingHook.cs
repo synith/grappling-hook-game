@@ -46,8 +46,7 @@ public class GrapplingHook : MonoBehaviour
 
 
         IsGrappling = true;
-        SoundManager.Instance.PlaySound(SoundManager.Sound.GrappleShoot);
-        SoundManager.Instance.PlaySound(SoundManager.Sound.GrappleShotFlying);
+        
 
         RaycastHit hit;
         if (Physics.Raycast(cameraTransform.position, cameraTransform.forward, out hit, maxDistance, grappleLayerMask))
@@ -68,11 +67,19 @@ public class GrapplingHook : MonoBehaviour
 
             lineRenderer.positionCount = 2;
 
-            SoundManager.Instance.PlaySound(SoundManager.Sound.GrappleHit);
+            SoundManager.Instance.PlaySound(SoundManager.Sound.GrappleShoot);
+            Invoke(nameof(GrappleShotFlyingSound), time: 0.02f);
         }
+        else
+        {
+            SoundManager.Instance.PlaySound(SoundManager.Sound.GrappleMiss);
+        }        
     }
 
-
+    void GrappleShotFlyingSound()
+    {
+        SoundManager.Instance.PlaySound(SoundManager.Sound.GrappleShotFlying);
+    }
     public void StopGrapple()
     {
         if (GameManager.Instance.currentState != GameManager.GameState.Playing)

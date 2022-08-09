@@ -9,7 +9,7 @@ public class SoundManager : MonoBehaviour
     {
         GrappleShoot,
         GrappleShotFlying,
-        GrappleHit,
+        GrappleMiss,
         GrappleSwinging,
         GrappleSwinging_2,
         GrappleRelease,
