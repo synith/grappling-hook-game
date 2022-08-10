@@ -13,9 +13,8 @@
 
 
 > <br> 
-
->  *Delayed by a week as my attempt to refactor the codebase unleashed many bugs that I did not discover until I went to publish the build.* <br>
-> <br>
+>  Delayed by a week as my attempt to refactor the codebase unleashed many bugs that I did not discover until I went to publish the build. <br>
+> <br> 
 
 
 
