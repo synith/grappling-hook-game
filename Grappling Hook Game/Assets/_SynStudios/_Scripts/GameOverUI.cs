@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,6 +8,8 @@ public class GameOverUI : MonoBehaviour
 {
     private Button retryBtn;
     private Button mainMenuBtn;
+
+    public static event Action onGameFinished;
 
 
     private void Awake()
@@ -33,5 +36,6 @@ public class GameOverUI : MonoBehaviour
     {
         gameObject.SetActive(true);
         GameManager.Instance.UpdateGameState(GameManager.GameState.Finished);
+        onGameFinished?.Invoke();
     }
 }
