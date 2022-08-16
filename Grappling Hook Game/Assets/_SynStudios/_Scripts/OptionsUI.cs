@@ -23,7 +23,7 @@ public class OptionsUI : MonoBehaviour
     private const float SENSITIVITY_COEFFICIENT = 2f;
     private const float DEFAULT_SENSITIVITY = 50f;
     private const string MOUSE_SENSITIVITY = "mouseSensitivity";
-    private const string CAMERA_INVERTED = "cameraInverted";
+    private const string CAMERA_INVERTED_SETTING = "cameraInverted";
 
 
     void Awake()
@@ -34,7 +34,7 @@ public class OptionsUI : MonoBehaviour
         sensitivitySlider = transform.Find("sensitivitySlider").GetComponent<Slider>();
         invertCameraToggle = transform.Find("invertCameraToggle").GetComponent<Toggle>();
 
-        cameraInverted = intToBool(PlayerPrefs.GetInt(CAMERA_INVERTED));
+        cameraInverted = intToBool(PlayerPrefs.GetInt(CAMERA_INVERTED_SETTING));
         onInvertVerticalCamera?.Invoke(cameraInverted);
     }
 
@@ -45,7 +45,7 @@ public class OptionsUI : MonoBehaviour
 
         invertCameraToggle.onValueChanged.AddListener((bool set) =>
         {
-            PlayerPrefs.SetInt(CAMERA_INVERTED, boolToInt(invertCameraToggle.isOn));
+            PlayerPrefs.SetInt(CAMERA_INVERTED_SETTING, boolToInt(invertCameraToggle.isOn));
             onInvertVerticalCamera?.Invoke(set);
         });
 
