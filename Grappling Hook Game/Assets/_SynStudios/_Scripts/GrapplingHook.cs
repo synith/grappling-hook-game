@@ -14,6 +14,7 @@ public class GrapplingHook : MonoBehaviour
 
     [SerializeField]
     private LayerMask grappleLayerMask;
+
     [SerializeField]
     private Transform shootPointTransform;
 
@@ -65,7 +66,7 @@ public class GrapplingHook : MonoBehaviour
 
 
         IsGrappling = true;
-        
+
 
         RaycastHit hit;
         if (Physics.Raycast(cameraTransform.position, cameraTransform.forward, out hit, maxDistance, grappleLayerMask))
@@ -92,7 +93,7 @@ public class GrapplingHook : MonoBehaviour
         else
         {
             SoundManager.Instance.PlaySound(SoundManager.Sound.GrappleMiss);
-        }        
+        }
     }
 
     void GrappleShotFlyingSound()
@@ -104,15 +105,22 @@ public class GrapplingHook : MonoBehaviour
         if (GameManager.Instance.currentState != GameManager.GameState.Playing)
             return;
 
-        IsGrappling = false;
+        if (!IsGrappling) return;
+
 
         lineRenderer.positionCount = 0;
 
-        if (!joint)
-            return;
+        
+        var joints = GetComponents<SpringJoint>();
+
+        foreach (var springJoint in joints)
+        {
+            Destroy(springJoint);
+        }
 
         SoundManager.Instance.PlaySound(SoundManager.Sound.GrappleRelease);
-        Destroy(joint);
+        IsGrappling = false;
+
     }
 
 
