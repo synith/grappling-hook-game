@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -20,7 +21,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private LayerMask jumpLayer;
 
-    private bool isPlayerGrounded;
+    private bool playerGrounded;
+    private bool playerJumpedRecently;
 
     private Vector3 moveDirection;
 
@@ -113,42 +115,49 @@ public class PlayerController : MonoBehaviour
 
 
 
-        if (!isWalkingForward && pressedForward && isPlayerGrounded)
+        if (!isWalkingForward && pressedForward && playerGrounded)
         {
             playerAnimator.SetBool(isWalkingForwardHash, true);
         }
-        if (isWalkingForward && !pressedForward || !isPlayerGrounded)
+        if (isWalkingForward && !pressedForward || !playerGrounded)
         {
             playerAnimator.SetBool(isWalkingForwardHash, false);
         }
 
 
-        if (!isWalkingBackwards && pressedBackwards && isPlayerGrounded)
+        if (!isWalkingBackwards && pressedBackwards && playerGrounded)
         {
             playerAnimator.SetBool(isWalkingBackwardsHash, true);
         }
-        if (isWalkingBackwards && !pressedBackwards || !isPlayerGrounded)
+        if (isWalkingBackwards && !pressedBackwards || !playerGrounded)
         {
             playerAnimator.SetBool(isWalkingBackwardsHash, false);
         }
 
 
-        if (!isWalkingRight && pressedRight && isPlayerGrounded)
+        if (!isWalkingRight && pressedRight && playerGrounded)
         {
             playerAnimator.SetBool(isWalkingRightHash, true);
         }
-        if (isWalkingRight && !pressedRight || !isPlayerGrounded)
+        if (isWalkingRight && !pressedRight || !playerGrounded)
         {
             playerAnimator.SetBool(isWalkingRightHash, false);
         }
 
-        if (!isWalkingLeft && pressedLeft && isPlayerGrounded)
+        if (!isWalkingLeft && pressedLeft && playerGrounded)
         {
             playerAnimator.SetBool(isWalkingLeftHash, true);
         }
-        if (isWalkingLeft && !pressedLeft || !isPlayerGrounded)
+        if (isWalkingLeft && !pressedLeft || !playerGrounded)
         {
             playerAnimator.SetBool(isWalkingLeftHash, false);
+        }
+
+        if (playerJumpedRecently && playerGrounded)
+        {            
+            playerAnimator.SetTrigger("landingTrigger");
+            Debug.Log("Landing!");
+            playerJumpedRecently = false;
         }
 
         CheckIfGrapplingStopped();
@@ -195,21 +204,21 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        isPlayerGrounded = CheckIfPlayerGrounded();
+        playerGrounded = CheckIfPlayerGrounded();
         MovePlayer();
 
         void MovePlayer()
         {
-            playerRigidbody.drag = isPlayerGrounded ? 10f : 0.1f;
+            playerRigidbody.drag = playerGrounded ? 10f : 0.1f;
 
-            float airModifier = isPlayerGrounded ? 1f : 0.5f;
-            float maxSpeed = isPlayerGrounded ? this.maxSpeed : maxSpeedAir;
+            float airModifier = playerGrounded ? 1f : 0.5f;
+            float maxSpeed = playerGrounded ? this.maxSpeed : maxSpeedAir;
 
             moveDirection *= playerSpeed * airModifier * Time.fixedDeltaTime;
 
             Vector2 rigidbodyVelocity = new Vector2(playerRigidbody.velocity.x, playerRigidbody.velocity.z);
 
-            float force = isPlayerGrounded ? forceModifier : forceModifier * 0.2f;
+            float force = playerGrounded ? forceModifier : forceModifier * 0.2f;
 
             if (rigidbodyVelocity.magnitude < maxSpeed)
             {
@@ -220,6 +229,7 @@ public class PlayerController : MonoBehaviour
 
 
     private bool CheckIfPlayerGrounded() => Physics.CheckSphere(groundChecker.position, groundDistance, jumpLayer, QueryTriggerInteraction.Ignore);
+
 
     private void Pause(InputAction.CallbackContext context)
     {
@@ -233,7 +243,7 @@ public class PlayerController : MonoBehaviour
         if (!context.performed)
             return;
 
-        if (!isPlayerGrounded)
+        if (!playerGrounded)
             return;
 
         if (GameManager.Instance.currentState != GameManager.GameState.Playing)
@@ -242,15 +252,27 @@ public class PlayerController : MonoBehaviour
 
         playerRigidbody.AddForce(Vector3.up * jumpHeight, ForceMode.Impulse);
         SoundManager.Instance.PlaySound(SoundManager.Sound.Jump);
-        playerAnimator.SetTrigger("jumpTrigger");
-
+        PlayJumpAnimation();
     }
-
+    private void PlayJumpAnimation() => StartCoroutine(nameof(JumpedRecently));
     private void Grapple(InputAction.CallbackContext context)
     {
         if (context.started)
         {
             hook.StartGrapple();
+            
+            if (!playerJumpedRecently)
+            {
+                PlayJumpAnimation();
+            }
         }
+    }
+
+    IEnumerator JumpedRecently()
+    {
+        playerAnimator.SetTrigger("jumpTrigger");
+        yield return new WaitForSeconds(0.3f);
+        Debug.Log("jumpedRecently");
+        playerJumpedRecently = true;
     }
 }
