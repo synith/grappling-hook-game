@@ -38,7 +38,8 @@ public class PlayerController : MonoBehaviour
         moveAction,
         jumpAction,
         grappleAction,
-        pauseAction;
+        pauseAction,
+        runAction;
 
     private Animator playerAnimator;
 
@@ -46,7 +47,8 @@ public class PlayerController : MonoBehaviour
         isWalkingForwardHash,
         isWalkingBackwardsHash,
         isWalkingRightHash,
-        isWalkingLeftHash;
+        isWalkingLeftHash,
+        isRunningForwardHash;
 
     private const float DEAD_ZONE = 0.05f;
 
@@ -67,6 +69,7 @@ public class PlayerController : MonoBehaviour
         jumpAction = playerControls.Player.Jump;
         grappleAction = playerControls.Player.Grapple;
         pauseAction = playerControls.Player.Pause;
+        runAction = playerControls.Player.Run;
     }
 
     private void Start()
@@ -75,6 +78,7 @@ public class PlayerController : MonoBehaviour
         isWalkingBackwardsHash = Animator.StringToHash("isWalkingBackwards");
         isWalkingRightHash = Animator.StringToHash("isWalkingRight");
         isWalkingLeftHash = Animator.StringToHash("isWalkingLeft");
+        isRunningForwardHash = Animator.StringToHash("isRunningForward");
     }
 
 
@@ -85,7 +89,10 @@ public class PlayerController : MonoBehaviour
         jumpAction.performed += Jump;
         grappleAction.started += Grapple;
         pauseAction.performed += Pause;
+        runAction.performed += StartRunning;
+        runAction.canceled += StopRunning;
     }
+
 
 
     private void OnDisable()
@@ -93,6 +100,8 @@ public class PlayerController : MonoBehaviour
         jumpAction.performed -= Jump;
         grappleAction.started -= Grapple;
         pauseAction.performed -= Pause;
+        runAction.performed -= StartRunning;
+        runAction.canceled -= StopRunning;
 
         playerControls.Player.Disable();
     }
@@ -113,6 +122,9 @@ public class PlayerController : MonoBehaviour
         bool isWalkingLeft = playerAnimator.GetBool(isWalkingLeftHash);
         bool pressedLeft = moveAction.ReadValue<Vector2>().x < -DEAD_ZONE;
 
+        bool isRunningForward = playerAnimator.GetBool(isRunningForwardHash);
+        bool pressedShift = runAction.IsPressed();
+
 
 
         if (!isWalkingForward && pressedForward && playerGrounded)
@@ -122,6 +134,15 @@ public class PlayerController : MonoBehaviour
         if (isWalkingForward && !pressedForward || !playerGrounded)
         {
             playerAnimator.SetBool(isWalkingForwardHash, false);
+        }
+
+        if (!isRunningForward && pressedShift && pressedForward && playerGrounded)
+        {
+            playerAnimator.SetBool(isRunningForwardHash, true);
+        }
+        if (isRunningForward && !pressedShift || !pressedForward || !playerGrounded)
+        {
+            playerAnimator.SetBool(isRunningForwardHash, false);
         }
 
 
@@ -154,7 +175,7 @@ public class PlayerController : MonoBehaviour
         }
 
         if (playerJumpedRecently && playerGrounded)
-        {            
+        {
             playerAnimator.SetTrigger("landingTrigger");
             Debug.Log("Landing!");
             playerJumpedRecently = false;
@@ -227,6 +248,23 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    private void StopRunning(InputAction.CallbackContext context)
+    {
+        if (context.canceled)
+        {
+            maxSpeed /= 2f;
+            playerSpeed /= 1.5f;
+        }
+    }
+
+    private void StartRunning(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+        {
+            maxSpeed *= 2f;
+            playerSpeed *= 1.5f;
+        }
+    }
 
     private bool CheckIfPlayerGrounded() => Physics.CheckSphere(groundChecker.position, groundDistance, jumpLayer, QueryTriggerInteraction.Ignore);
 
@@ -260,7 +298,7 @@ public class PlayerController : MonoBehaviour
         if (context.started)
         {
             hook.StartGrapple();
-            
+
             if (!playerJumpedRecently)
             {
                 PlayJumpAnimation();
