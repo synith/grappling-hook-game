@@ -62,7 +62,7 @@ public class PlayerInput : MonoBehaviour
 
     private void StopRunning(InputAction.CallbackContext context)
     {
-        if (!context.performed) return;
+        if (!context.canceled) return;
         IsRunning = false;
     }
 
