@@ -6,191 +6,72 @@ using UnityEngine.InputSystem;
 public class PlayerController : MonoBehaviour
 {
     [SerializeField]
-    private GameEventSO onPlayerPaused;
-
-    [SerializeField]
-    private float
-        playerSpeed,
+    float
+        playerSpeedSetting,
         jumpHeight,
         rotationSpeed,
         forceModifier,
-        maxSpeed,
+        maxSpeedSetting,
         maxSpeedAir,
         groundDistance;
 
+    float speed;
+    float maxSpeed;
+
     [SerializeField]
-    private LayerMask jumpLayer;
+    LayerMask jumpLayer;
 
-    private bool playerGrounded;
-    private bool playerJumpedRecently;
+    public static bool Grounded { get; private set; }
 
-    private Vector3 moveDirection;
+    Vector3 moveDirection;
 
-    private GrapplingHook hook;
+    GrapplingHook hook;
 
-    private Rigidbody playerRigidbody;
-    private Transform cameraTransform;
-    private Transform groundChecker;
+    Rigidbody playerRigidbody;
+    Transform cameraTransform;
+    Transform groundChecker;
 
-    private PlayerControls playerControls;
-
-    private InputAction
-        moveAction,
-        jumpAction,
-        grappleAction,
-        pauseAction,
-        runAction;
-
-    private Animator playerAnimator;
-
-    private int
-        isWalkingForwardHash,
-        isWalkingBackwardsHash,
-        isWalkingRightHash,
-        isWalkingLeftHash,
-        isRunningForwardHash;
-
-    private const float DEAD_ZONE = 0.05f;
-
-
-    private void Awake()
+    void Awake()
     {
         cameraTransform = Camera.main.transform;
-
-        playerControls = new PlayerControls();
-
         hook = GetComponent<GrapplingHook>();
         playerRigidbody = GetComponent<Rigidbody>();
-
         groundChecker = transform.Find("groundChecker");
-        playerAnimator = transform.Find("playerModel").GetComponent<Animator>();
-
-        moveAction = playerControls.Player.Move;
-        jumpAction = playerControls.Player.Jump;
-        grappleAction = playerControls.Player.Grapple;
-        pauseAction = playerControls.Player.Pause;
-        runAction = playerControls.Player.Run;
     }
 
-    private void Start()
+    void OnEnable()
     {
-        isWalkingForwardHash = Animator.StringToHash("isWalkingForward");
-        isWalkingBackwardsHash = Animator.StringToHash("isWalkingBackwards");
-        isWalkingRightHash = Animator.StringToHash("isWalkingRight");
-        isWalkingLeftHash = Animator.StringToHash("isWalkingLeft");
-        isRunningForwardHash = Animator.StringToHash("isRunningForward");
+        PlayerInput.OnJump += Jump;
+        PlayerInput.OnStartGrapple += StartGrapple;
+        PlayerInput.OnStopGrapple += StopGrapple;
+
     }
 
-
-    private void OnEnable()
+    void OnDisable()
     {
-        playerControls.Player.Enable();
+        PlayerInput.OnJump -= Jump;
+        PlayerInput.OnStartGrapple -= StartGrapple;
+        PlayerInput.OnStopGrapple -= StopGrapple;
 
-        jumpAction.performed += Jump;
-        grappleAction.started += Grapple;
-        pauseAction.performed += Pause;
-        runAction.performed += StartRunning;
-        runAction.canceled += StopRunning;
     }
 
-
-
-    private void OnDisable()
+    void Update()
     {
-        jumpAction.performed -= Jump;
-        grappleAction.started -= Grapple;
-        pauseAction.performed -= Pause;
-        runAction.performed -= StartRunning;
-        runAction.canceled -= StopRunning;
-
-        playerControls.Player.Disable();
-    }
-
-
-    private void Update()
-    {
-        bool isWalkingForward = playerAnimator.GetBool(isWalkingForwardHash);
-        bool pressedForward = moveAction.ReadValue<Vector2>().y > DEAD_ZONE;
-
-        bool isWalkingBackwards = playerAnimator.GetBool(isWalkingBackwardsHash);
-        bool pressedBackwards = moveAction.ReadValue<Vector2>().y < -DEAD_ZONE;
-
-
-        bool isWalkingRight = playerAnimator.GetBool(isWalkingRightHash);
-        bool pressedRight = moveAction.ReadValue<Vector2>().x > DEAD_ZONE;
-
-        bool isWalkingLeft = playerAnimator.GetBool(isWalkingLeftHash);
-        bool pressedLeft = moveAction.ReadValue<Vector2>().x < -DEAD_ZONE;
-
-        bool isRunningForward = playerAnimator.GetBool(isRunningForwardHash);
-        bool pressedShift = runAction.IsPressed();
-
-
-
-        if (!isWalkingForward && pressedForward && playerGrounded)
-        {
-            playerAnimator.SetBool(isWalkingForwardHash, true);
-        }
-        if (isWalkingForward && !pressedForward || !playerGrounded)
-        {
-            playerAnimator.SetBool(isWalkingForwardHash, false);
-        }
-
-        if (!isRunningForward && pressedShift && pressedForward && playerGrounded)
-        {
-            playerAnimator.SetBool(isRunningForwardHash, true);
-        }
-        if (isRunningForward && !pressedShift || !pressedForward || !playerGrounded)
-        {
-            playerAnimator.SetBool(isRunningForwardHash, false);
-        }
-
-
-        if (!isWalkingBackwards && pressedBackwards && playerGrounded)
-        {
-            playerAnimator.SetBool(isWalkingBackwardsHash, true);
-        }
-        if (isWalkingBackwards && !pressedBackwards || !playerGrounded)
-        {
-            playerAnimator.SetBool(isWalkingBackwardsHash, false);
-        }
-
-
-        if (!isWalkingRight && pressedRight && playerGrounded)
-        {
-            playerAnimator.SetBool(isWalkingRightHash, true);
-        }
-        if (isWalkingRight && !pressedRight || !playerGrounded)
-        {
-            playerAnimator.SetBool(isWalkingRightHash, false);
-        }
-
-        if (!isWalkingLeft && pressedLeft && playerGrounded)
-        {
-            playerAnimator.SetBool(isWalkingLeftHash, true);
-        }
-        if (isWalkingLeft && !pressedLeft || !playerGrounded)
-        {
-            playerAnimator.SetBool(isWalkingLeftHash, false);
-        }
-
-        if (playerJumpedRecently && playerGrounded)
-        {
-            playerAnimator.SetTrigger("landingTrigger");
-            Debug.Log("Landing!");
-            playerJumpedRecently = false;
-        }
-
-        CheckIfGrapplingStopped();
         RotatePlayerTowardsCamera();
         SetMovementDirectionFromInputAndCamera();
+        CheckIfRunning();
 
-
-        void CheckIfGrapplingStopped()
+        void CheckIfRunning()
         {
-            if (grappleAction.WasReleasedThisFrame())
+            if (PlayerInput.IsRunning)
             {
-                hook.StopGrapple();
+                maxSpeed = maxSpeedSetting * 2f;
+                speed = playerSpeedSetting * 1.5f;
+            }
+            else
+            {
+                maxSpeed = maxSpeedSetting;
+                speed = playerSpeedSetting;
             }
         }
 
@@ -202,7 +83,7 @@ public class PlayerController : MonoBehaviour
 
             Vector3 PlayerInputVectorNormalized()
             {
-                Vector2 input = moveAction.ReadValue<Vector2>();
+                Vector2 input = PlayerInput.InputDirection;
                 Vector3 move = new(input.x, 0, input.y);
                 return move.normalized;
             }
@@ -223,23 +104,23 @@ public class PlayerController : MonoBehaviour
     }
 
 
-    private void FixedUpdate()
+    void FixedUpdate()
     {
-        playerGrounded = CheckIfPlayerGrounded();
+        Grounded = CheckIfPlayerGrounded();
         MovePlayer();
 
         void MovePlayer()
         {
-            playerRigidbody.drag = playerGrounded ? 10f : 0.1f;
+            playerRigidbody.drag = Grounded ? 10f : 0.1f;
 
-            float airModifier = playerGrounded ? 1f : 0.5f;
-            float maxSpeed = playerGrounded ? this.maxSpeed : maxSpeedAir;
+            float airModifier = Grounded ? 1f : 0.5f;
+            float maxSpeed = Grounded ? this.maxSpeed : maxSpeedAir;
 
-            moveDirection *= playerSpeed * airModifier * Time.fixedDeltaTime;
+            moveDirection *= speed * airModifier * Time.fixedDeltaTime;
 
             Vector2 rigidbodyVelocity = new Vector2(playerRigidbody.velocity.x, playerRigidbody.velocity.z);
 
-            float force = playerGrounded ? forceModifier : forceModifier * 0.2f;
+            float force = Grounded ? forceModifier : forceModifier * 0.2f;
 
             if (rigidbodyVelocity.magnitude < maxSpeed)
             {
@@ -248,40 +129,12 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private void StopRunning(InputAction.CallbackContext context)
+
+    bool CheckIfPlayerGrounded() => Physics.CheckSphere(groundChecker.position, groundDistance, jumpLayer, QueryTriggerInteraction.Ignore);
+
+    void Jump()
     {
-        if (context.canceled)
-        {
-            maxSpeed /= 2f;
-            playerSpeed /= 1.5f;
-        }
-    }
-
-    private void StartRunning(InputAction.CallbackContext context)
-    {
-        if (context.performed)
-        {
-            maxSpeed *= 2f;
-            playerSpeed *= 1.5f;
-        }
-    }
-
-    private bool CheckIfPlayerGrounded() => Physics.CheckSphere(groundChecker.position, groundDistance, jumpLayer, QueryTriggerInteraction.Ignore);
-
-
-    private void Pause(InputAction.CallbackContext context)
-    {
-        if (context.performed)
-        {
-            onPlayerPaused.TriggerEvent();
-        }
-    }
-    private void Jump(InputAction.CallbackContext context)
-    {
-        if (!context.performed)
-            return;
-
-        if (!playerGrounded)
+        if (!Grounded)
             return;
 
         if (GameManager.Instance.currentState != GameManager.GameState.Playing)
@@ -290,27 +143,9 @@ public class PlayerController : MonoBehaviour
 
         playerRigidbody.AddForce(Vector3.up * jumpHeight, ForceMode.Impulse);
         SoundManager.Instance.PlaySound(SoundManager.Sound.Jump);
-        PlayJumpAnimation();
     }
-    private void PlayJumpAnimation() => StartCoroutine(nameof(JumpedRecently));
-    private void Grapple(InputAction.CallbackContext context)
-    {
-        if (context.started)
-        {
-            hook.StartGrapple();
+    void StartGrapple() => hook.StartGrapple();
 
-            if (!playerJumpedRecently)
-            {
-                PlayJumpAnimation();
-            }
-        }
-    }
+    void StopGrapple() => hook.StopGrapple();
 
-    IEnumerator JumpedRecently()
-    {
-        playerAnimator.SetTrigger("jumpTrigger");
-        yield return new WaitForSeconds(0.3f);
-        Debug.Log("jumpedRecently");
-        playerJumpedRecently = true;
-    }
 }
