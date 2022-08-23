@@ -57,12 +57,21 @@ public class PlayerAnimationController : MonoBehaviour
         playerJumpedRecently = true;
     }
 
+    void PlayLandingEffect() => StartCoroutine(nameof(LandingEffect));
+
+    IEnumerator LandingEffect()
+    {
+        yield return new WaitForSeconds(0.2f);
+        Instantiate(GameAssets.Instance.pf_LandingEffect, transform.position + Vector3.down, Quaternion.Euler(-90, 0, 0));
+    }
+
     void Update()
     {
         if (playerJumpedRecently && PlayerController.Grounded)
         {
             playerAnimator.SetTrigger("landingTrigger");
-            SoundManager.Instance.PlaySound(SoundManager.Sound.Landing);
+            SoundManager.Instance.PlaySound(SoundManager.Sound.Landing);            
+            PlayLandingEffect();
             Debug.Log("Landing!");
             playerJumpedRecently = false;
         }

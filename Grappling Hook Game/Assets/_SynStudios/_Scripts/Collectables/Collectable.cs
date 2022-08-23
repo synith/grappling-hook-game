@@ -26,6 +26,7 @@ public class Collectable : MonoBehaviour
 		_isCollected = true;
         Destroy(gameObject);
 
+		Instantiate(GameAssets.Instance.pf_CollectableEffect, transform.position, Quaternion.identity);
         SoundManager.Instance.PlaySound(SoundManager.Sound.Collected);
 
 		_collectableCounter.CountCollectable(_collectableType);

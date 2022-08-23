@@ -87,6 +87,7 @@ public class GrapplingHook : MonoBehaviour
 
             lineRenderer.positionCount = 2;
 
+            Instantiate(GameAssets.Instance.pf_GrappleHitEffect, GrapplePoint, Quaternion.identity);
             SoundManager.Instance.PlaySound(SoundManager.Sound.GrappleShoot);
             Invoke(nameof(GrappleShotFlyingSound), time: 0.02f);
         }
