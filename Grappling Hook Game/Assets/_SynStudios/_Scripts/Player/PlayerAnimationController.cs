@@ -34,6 +34,7 @@ public class PlayerAnimationController : MonoBehaviour
     void StartGrapple()
     {
         if (playerJumpedRecently) return;
+        Jump();
     }
 
     void Jump()
