@@ -13,6 +13,8 @@ public class MusicManager : MonoBehaviour
     }
     public float Volume { get; private set; } = 0.5f;
 
+    private float volumeModifier;
+
     private AudioSource audioSource;
     private Dictionary<Music, AudioClip> musicAudioClipDictionary;
 
@@ -27,11 +29,11 @@ public class MusicManager : MonoBehaviour
         }
         Instance = this;
         DontDestroyOnLoad(gameObject);
-
+        volumeModifier = 0.3f;
         Volume = PlayerPrefs.GetFloat(MUSIC_VOLUME, 0.5f);
 
         audioSource = GetComponent<AudioSource>();
-        audioSource.volume = Volume;
+        audioSource.volume = Volume * volumeModifier;
 
         musicAudioClipDictionary = new Dictionary<Music, AudioClip>();
 
@@ -61,7 +63,7 @@ public class MusicManager : MonoBehaviour
     {
         Volume += 0.1f;
         Volume = Mathf.Clamp01(Volume);
-        audioSource.volume = Volume;
+        audioSource.volume = Volume * volumeModifier;
         PlayerPrefs.SetFloat(MUSIC_VOLUME, Volume);
     }
 
@@ -70,7 +72,7 @@ public class MusicManager : MonoBehaviour
     {
         Volume -= 0.1f;
         Volume = Mathf.Clamp01(Volume);
-        audioSource.volume = Volume;
+        audioSource.volume = Volume * volumeModifier;
         PlayerPrefs.SetFloat(MUSIC_VOLUME, Volume);
     }
 }
